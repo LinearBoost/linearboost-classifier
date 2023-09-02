@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Sep  2 23:11:57 2023
+
+@author: HP
+"""
+
 import pandas as pd
 import numpy as np
 import matplotlib as plt
@@ -25,11 +32,14 @@ import timeit
 
 #df = pd.read_csv("./Datasets/CNAE-9.csv", header = None)
 #df = pd.read_csv("./Datasets/Wave5000.csv", header = None)
-df = pd.read_csv("D:/SEFR/Multiclass Classification/Datasets/CNAE-9.csv", header = None)
+#df = pd.read_csv("D:/SEFR/Multiclass Classification/Datasets/CNAE-9.csv", header = None)
+df = pd.read_csv("D:/SEFR/Datasets/wdbc/wdbc.data", header = None)
 #df = pd.read_csv("./Datasets/MNIST.csv", header = None)
 #df = pd.read_excel("D:/SEFR/Datasets/Dry_Bean_Dataset.xlsx", index_col=None)
-
-
+#print(df)
+#exit()
+#print(df.iloc[0,:])
+#exit()
 df = df.fillna(df.mean())
 
 
@@ -44,10 +54,10 @@ def classification_model(model, data, predictors, outcome):
     errs = []
     loglosslist = []
     for train_index, test_index in kf.split(data):
-        X_train = data.iloc[train_index,1:]
-        y_train = data.iloc[train_index, 0]
-        X_test = data.iloc[test_index,1:]
-        y_test = data.iloc[test_index,0]
+        X_train = data.iloc[train_index,2:]
+        y_train = data.iloc[train_index, 1]
+        X_test = data.iloc[test_index,2:]
+        y_test = data.iloc[test_index,1]
         
 # =============================================================================
 #         X_train = data.iloc[train_index, :-1]
@@ -104,7 +114,7 @@ outcome_var = 0
 #model = GaussianNB()
 #model = OneVsRestClassifier(svm.SVC(kernel='linear'))
 #model = sefr.SEFR()
-model = linboostclassifier(n_estimators=10) 
+model = linboostclassifier(n_estimators=200) 
 
 classification_model(model, df, predictor_var, outcome_var)
 stop = timeit.default_timer()

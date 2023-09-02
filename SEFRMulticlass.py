@@ -53,12 +53,13 @@ class SEFR(BaseEstimator):
         
         self.label_encoder.fit(target_train)
         encoded_labels = self.label_encoder.transform(target_train)
+        
 
         start_time = time.monotonic_ns()
         data_train = np.array(data_train, dtype='float32')
         target_train = np.array(encoded_labels, dtype='int32')
-        
-        
+        self.labels = np.unique(target_train) # get all labels
+
         for label in self.labels: # train binary classifiers on each labels
             
             pos_labels = (target_train != label) # use "not the label" as positive class
