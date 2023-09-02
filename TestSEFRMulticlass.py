@@ -25,7 +25,7 @@ import timeit
 
 #df = pd.read_csv("./Datasets/CNAE-9.csv", header = None)
 #df = pd.read_csv("./Datasets/Wave5000.csv", header = None)
-df = pd.read_csv("D:/SEFR/Multiclass Classification/Datasets/CNAE-9.csv", header = None)
+df = pd.read_csv("D:/SEFR/Multiclass Classification/Datasets/Wave5000.csv", header = None)
 #df = pd.read_csv("./Datasets/MNIST.csv", header = None)
 #df = pd.read_excel("D:/SEFR/Datasets/Dry_Bean_Dataset.xlsx", index_col=None)
 
@@ -42,6 +42,7 @@ def classification_model(model, data, predictors, outcome):
     fold= 0
     error = []
     errs = []
+    loglosslist = []
     for train_index, test_index in kf.split(data):
         X_train = data.iloc[train_index,1:]
         y_train = data.iloc[train_index, 0]
@@ -60,17 +61,23 @@ def classification_model(model, data, predictors, outcome):
         #adaboost_sefr = AdaBoostClassifier(estimator=model, n_estimators=2000, random_state=0, algorithm="SAMME")
         #bagging adaboost_sefr = BaggingClassifier(base_estimator=model, n_estimators=100, random_state=0)
         #adaboost_sefr = GradientBoostingClassifier(init=model, n_estimators=200)
-        adaboost_sfr = model
-        #adaboost_sefr = model
+        adaboost_sefr = model
 
         adaboost_sefr.fit(X_train, y_train)
         #model.fit(X_train, y_train)
         y_pred = adaboost_sefr.predict(X_test)
+        y_pred_proba = adaboost_sefr.predict_proba(X_test)
         
         #y_pred = adaboost_sefr.predict(X_test)
         
         acc = metrics.accuracy_score(y_pred, y_test)
         err = metrics.f1_score(y_pred, y_test, average = 'macro')
+        #print(y_test)
+        #print(y_pred)
+
+        logloss = metrics.log_loss(y_test, y_pred_proba)
+        loglosslist.append(logloss)
+        
         errs.append(err)
         error.append(acc)
         print(err)
@@ -83,10 +90,12 @@ def classification_model(model, data, predictors, outcome):
         
     print("Cross-Validation Accuracy Score: %s" % "{0:.3%}".format(np.mean(error)))
     print("Cross-Validation F1 Score: %s" % "{0:.3%}".format(np.mean(errs)))
+    print("Cross-Validation LogLoss: %s" % "{0:.3}".format(np.mean(loglosslist)))
 
 predictor_var = []
 outcome_var = 0
 
+#model = CatBoostClassifier(loss_function="MultiClass")
 #model = lgb.LGBMClassifier()
 #model = XGBClassifier()
 #model = CatBoostClassifier(iterations=50, loss_function="MultiClass")
