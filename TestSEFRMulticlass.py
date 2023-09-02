@@ -104,7 +104,7 @@ outcome_var = 0
 #model = GaussianNB()
 #model = OneVsRestClassifier(svm.SVC(kernel='linear'))
 #model = sefr.SEFR()
-model = linboostclassifier(n_estimators=10)
+model = linboostclassifier(n_estimators=200)
 
 classification_model(model, df, predictor_var, outcome_var)
 stop = timeit.default_timer()

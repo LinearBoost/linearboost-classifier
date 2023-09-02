@@ -129,7 +129,7 @@ class SEFR(BaseEstimator):
         return {}
 
 def linboostclassifier(n_estimators=10):
-    return AdaboostClassifier(init=SEFR(), n_estimators=n_estimators)
+    return AdaBoostClassifier(base_estimator=SEFR(), n_estimators=n_estimators)
 # ================================================================================
 
 if __name__ == '__main__':
