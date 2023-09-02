@@ -25,8 +25,9 @@ import timeit
 
 #df = pd.read_csv("./Datasets/CNAE-9.csv", header = None)
 #df = pd.read_csv("./Datasets/Wave5000.csv", header = None)
-df = pd.read_csv("./Datasets/Semeion.csv", header = None)
+df = pd.read_csv("D:/SEFR/Multiclass Classification/Datasets/CNAE-9.csv", header = None)
 #df = pd.read_csv("./Datasets/MNIST.csv", header = None)
+#df = pd.read_excel("D:/SEFR/Datasets/Dry_Bean_Dataset.xlsx", index_col=None)
 
 
 df = df.fillna(df.mean())
@@ -47,10 +48,18 @@ def classification_model(model, data, predictors, outcome):
         X_test = data.iloc[test_index,1:]
         y_test = data.iloc[test_index,0]
         
+# =============================================================================
+#         X_train = data.iloc[train_index, :-1]
+#         y_train = data.iloc[train_index, -1]
+#         X_test = data.iloc[test_index, :-1]
+#         y_test = data.iloc[test_index, -1]
+# 
+# =============================================================================
+        
 
         #adaboost_sefr = AdaBoostClassifier(estimator=model, n_estimators=2000, random_state=0, algorithm="SAMME")
         #bagging adaboost_sefr = BaggingClassifier(base_estimator=model, n_estimators=100, random_state=0)
-        adaboost_sefr = GradientBoostingClassifier(init=model, n_estimators=200)
+        #adaboost_sefr = GradientBoostingClassifier(init=model, n_estimators=200)
         adaboost_sfr = model
         #adaboost_sefr = model
 
@@ -60,8 +69,8 @@ def classification_model(model, data, predictors, outcome):
         
         #y_pred = adaboost_sefr.predict(X_test)
         
-        acc = metrics.accuracy_score(y_pred, data.iloc[test_index,0])
-        err = metrics.f1_score(y_pred, data.iloc[test_index,0], average = 'macro')
+        acc = metrics.accuracy_score(y_pred, y_test)
+        err = metrics.f1_score(y_pred, y_test, average = 'macro')
         errs.append(err)
         error.append(acc)
         print(err)
@@ -86,7 +95,7 @@ outcome_var = 0
 #model = GaussianNB()
 #model = OneVsRestClassifier(svm.SVC(kernel='linear'))
 #model = sefr.SEFR()
-model = linboostclassifier()
+model = linboostclassifier(n_estimators=10)
 
 classification_model(model, df, predictor_var, outcome_var)
 stop = timeit.default_timer()

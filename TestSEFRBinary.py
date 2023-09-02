@@ -32,9 +32,9 @@ from sklearn.ensemble import AdaBoostClassifier, GradientBoostingClassifier, Bag
 
 #df = pd.read_csv("./Datasets/GLI_85.csv", header = None)
 #df = pd.read_csv("./Datasets/SMK_CAN_187.csv", header = None)
-df = pd.read_csv("./Datasets/Basehock.csv", header = None)
-#df = pd.read_csv("./Datasets/Gisette.csv", header = None)
-#df = pd.read_csv("./Datasets/Sonar.csv", header = None)
+#df = pd.read_csv("./Datasets/Basehock.csv", header = None)
+#df = pd.read_csv("D:/SEFR/Binary Classification/Datasets/Gisette.csv", header = None)
+df = pd.read_csv("D:/SEFR/Binary Classification/Datasets/Basehock.csv", header = None)
 #df = pd.read_csv("./Datasets/GLI.csv", header = None)
 #df = pd.read_csv("./Datasets/Banknote.csv", header = None)
 #df = pd.read_csv("D:/Datasets/Big Data/Higgs/HIGGS - Normalized.csv", header = None)
@@ -65,7 +65,7 @@ def classification_model(model, data, predictors, outcome):
         
         
         #adaboost_sefr = model
-        adaboost_sefr = AdaBoostClassifier(estimator=model, n_estimators=200, random_state=0, algorithm="SAMME")
+        #adaboost_sefr = AdaBoostClassifier(estimator=model, n_estimators=200, random_state=0, algorithm="SAMME")
         adaboost_sefr = model
         #bagging adaboost_sefr = BaggingClassifier(base_estimator=model, n_estimators=100, random_state=0)
         #adaboost_sefr = GradientBoostingClassifier(init=model, n_estimators=10)
@@ -102,7 +102,7 @@ outcome_var = 0
 #model = svm.SVC(kernel='linear')
 #model = LogisticRegression(max_iter=500)
 #model = sefr.SEFR()
-model = linboostclassifier()
+model = linboostclassifier(n_estimators=10)
 #model = KNeighborsClassifier()
 
 classification_model(model, df, predictor_var, outcome_var)

@@ -23,6 +23,7 @@ class SEFR(BaseEstimator):
         self.training_time = 0
         self.classes_ = np.array([])
         self.scaler = MinMaxScaler(feature_range=(0, 1))
+        self.label_encoder = LabelEncoder()
 
         #self.classes_ = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8])
 
@@ -50,12 +51,12 @@ class SEFR(BaseEstimator):
             
         data_train = self.scaler.fit_transform(data_train)
         
-        #self.label_encoder.fit(target_train)
-        #encoded_labels = self.label_encoder.transform(train_target)
+        self.label_encoder.fit(target_train)
+        encoded_labels = self.label_encoder.transform(target_train)
 
         start_time = time.monotonic_ns()
         data_train = np.array(data_train, dtype='float32')
-        target_train = np.array(target_train, dtype='int32')
+        target_train = np.array(encoded_labels, dtype='int32')
         
         
         for label in self.labels: # train binary classifiers on each labels
@@ -98,7 +99,9 @@ class SEFR(BaseEstimator):
         # calculate weighted score + bias on each labels
         weighted_score = np.add(np.dot(self.weights, new_data.T).T, self.bias)
         #print(weighted_score)
-        return self.labels[np.argmin(weighted_score, axis=1)]
+        preds = self.labels[np.argmin(weighted_score, axis=1)]
+        original_preds = self.label_encoder.inverse_transform(preds)
+        return original_preds
 
     def predict_proba(self, new_data):
         """
@@ -106,19 +109,26 @@ class SEFR(BaseEstimator):
         """
         new_data = self.scaler.transform(new_data)
         new_data = np.array(new_data, dtype='float32')
+        #print(new_data)
 
         # calculate weighted score + bias on each label
         weighted_score = np.add(np.dot(self.weights, new_data.T).T, self.bias)
+        
         weighted_score = self._sigmoid(weighted_score)
+        
         exp_scores = np.exp(weighted_score)
+        
         class_probs = exp_scores / np.sum(exp_scores, axis=1, keepdims=True)
+        #class_probs = weighted_score / np.sum(weighted_score, axis=1, keepdims=True)
+        #print(class_probs)
+        
         return class_probs
     
     
     def get_params(self, deep=True): # for cross-validation
         return {}
 
-def linboostclassifier(n_estimators=200):
+def linboostclassifier(n_estimators=10):
     return GradientBoostingClassifier(init=SEFR(), n_estimators=n_estimators)
 # ================================================================================
 
