@@ -22,7 +22,7 @@ class SEFR(BaseEstimator):
         self.bias = np.array([])
         self.training_time = 0
         self.classes_ = np.array([])
-        self.scaler = MinMaxScaler(feature_range=(0, 1))
+        #self.scaler = MinMaxScaler(feature_range=(0, 1))
 
         #self.classes_ = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8])
 
@@ -48,7 +48,7 @@ class SEFR(BaseEstimator):
         else:
             sample_weight = np.ones(len(target_train), dtype="float32")
             
-        data_train = self.scaler.fit_transform(data_train)
+        #data_train = self.scaler.fit_transform(data_train)
         
         #self.label_encoder.fit(target_train)
         #encoded_labels = self.label_encoder.transform(train_target)
@@ -92,7 +92,7 @@ class SEFR(BaseEstimator):
         """
         Predict labels of the new data.
         """
-        new_data = self.scaler.transform(new_data)
+        #new_data = self.scaler.transform(new_data)
         new_data = np.array(new_data, dtype='float32')
 
         # calculate weighted score + bias on each labels
@@ -104,7 +104,7 @@ class SEFR(BaseEstimator):
         """
         Predict class probabilities of the new data.
         """
-        new_data = self.scaler.transform(new_data)
+        #new_data = self.scaler.transform(new_data)
         new_data = np.array(new_data, dtype='float32')
 
         # calculate weighted score + bias on each label
@@ -118,8 +118,31 @@ class SEFR(BaseEstimator):
     def get_params(self, deep=True): # for cross-validation
         return {}
 
-def linboostclassifier(n_estimators=200):
-    return GradientBoostingClassifier(init=SEFR(), n_estimators=n_estimators)
+class LinBoostClassifier(AdaBoostClassifier):
+    
+    def __init__(self, n_estimators=200, learning_rate=1.0, algorithm='SAMME', random_state=9):
+        self.scaler = MinMaxScaler(feature_range=(0, 1))
+        self.label_encoder = LabelEncoder()
+        super().__init__(estimator=SEFR(), n_estimators=n_estimators, learning_rate=learning_rate, algorithm=algorithm, random_state=random_state)
+
+
+    def fit(self, X, y, sample_weight=None):
+        X = self.scaler.fit_transform(X)
+        self.label_encoder.fit(y)
+        y = self.label_encoder.transform(y)
+        return super().fit(X, y, sample_weight)
+    
+    def predict(self, X):
+        X = self.scaler.transform(X)
+        y_pred = super().predict(X)
+        return self.label_encoder.inverse_transform(y_pred)
+    
+    def predict_proba(self, X):
+        X = self.scaler.fit_transform(X)
+        return super().predict_proba(X)
+    
+#def linboostclassifier(n_estimators=200):
+    #return GradientBoostingClassifier(init=SEFR(), n_estimators=n_estimators)
 # ================================================================================
 
 if __name__ == '__main__':

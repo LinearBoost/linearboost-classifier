@@ -21,14 +21,15 @@ class SEFR(BaseEstimator):
         train_target : integer, numpy array
             labels, should consist of 0s and 1s
         """
-        train_predictors = self.scaler.fit_transform(train_predictors)
+        #train_predictors = self.scaler.fit_transform(train_predictors)
         
-        self.label_encoder.fit(train_target)
-        encoded_labels = self.label_encoder.transform(train_target)
+        #self.label_encoder.fit(train_target)
+        #encoded_labels = self.label_encoder.transform(train_target)
         #print(train_predictors)
         
         X = np.array(train_predictors, dtype="float32")
-        y = np.array(encoded_labels, dtype="int32")
+        #y = np.array(encoded_labels, dtype="int32")
+        y = np.array(train_target, dtype="int32")
 
         if sample_weight is not None:
             sample_weight = np.array(sample_weight, dtype="float32")
@@ -73,14 +74,16 @@ class SEFR(BaseEstimator):
         ----------
         predictions in numpy array
         """
-        X = self.scaler.transform(test_predictors)
+        #X = self.scaler.transform(test_predictors)
+        X = test_predictors
         if isinstance(test_predictors, list):
             X = np.array(test_predictors, dtype="float32")
 
         temp = np.dot(X, self.weights)
         preds = np.where(temp <= self.bias, 0 , 1)
-        original_preds = self.label_encoder.inverse_transform(preds)
-        return original_preds 
+        #original_preds = self.label_encoder.inverse_transform(preds)
+        #return original_preds 
+        return preds
     
     def predict_proba(self, test_predictors):
         """
@@ -113,5 +116,28 @@ class SEFR(BaseEstimator):
         return np.column_stack((1 - pred_proba, pred_proba))
 
 
+class LinBoostClassifier(AdaBoostClassifier):
+    def __init__(self, n_estimators=200, learning_rate=1.0, algorithm='SAMME', random_state=9):
+        self.scaler = MinMaxScaler(feature_range=(0, 1))
+        self.label_encoder = LabelEncoder()
+        super().__init__(estimator=SEFR(), n_estimators=n_estimators, learning_rate=learning_rate, algorithm=algorithm, random_state=random_state)
+
+
+    def fit(self, X, y, sample_weight=None):
+        X = self.scaler.fit_transform(X)
+        self.label_encoder.fit(y)
+        y = self.label_encoder.transform(y)
+        return super().fit(X, y, sample_weight)
+    
+    def predict(self, X):
+        X = self.scaler.transform(X)
+        y_pred = super().predict(X)
+        return self.label_encoder.inverse_transform(y_pred)
+    
+    def predict_proba(self, X):
+        X = self.scaler.fit_transform(X)
+        return super().predict_proba(X)
+    
+    
 def linboostclassifier(n_estimators=200, random_state=0, algorithm="SAMME"):
     return AdaBoostClassifier(estimator=SEFR(), n_estimators=n_estimators, random_state=random_state, algorithm=algorithm)

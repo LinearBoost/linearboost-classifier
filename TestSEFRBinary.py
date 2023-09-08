@@ -23,18 +23,18 @@ from sklearn import metrics
 from sklearn import svm
 from sklearn.neighbors import KNeighborsClassifier
 import SefrBinary as sefr
-from SefrBinary import linboostclassifier
+from SefrBinary import linboostclassifier, LinBoostClassifier
 
 import timeit
 
 from sklearn.ensemble import AdaBoostClassifier, GradientBoostingClassifier, BaggingClassifier
 #from sklearn.ensemble import 
 
-#df = pd.read_csv("./Datasets/GLI_85.csv", header = None)
-#df = pd.read_csv("./Datasets/SMK_CAN_187.csv", header = None)
-df = pd.read_csv("./Datasets/Basehock.csv", header = None)
+df = pd.read_csv("D:/SEFR/Binary Classification/Datasets/GLI_85.csv", header = None)
+#df = pd.read_csv("D:/SEFR/Binary Classification/Datasets/SMK_CAN_187.csv", header = None)
+#df = pd.read_csv("./Datasets/Basehock.csv", header = None)
 #df = pd.read_csv("./Datasets/Gisette.csv", header = None)
-#df = pd.read_csv("./Datasets/Sonar.csv", header = None)
+#df = pd.read_csv("D:/SEFR/Binary Classification/Datasets/Sonar.csv", header = None)
 #df = pd.read_csv("./Datasets/GLI.csv", header = None)
 #df = pd.read_csv("./Datasets/Banknote.csv", header = None)
 #df = pd.read_csv("D:/Datasets/Big Data/Higgs/HIGGS - Normalized.csv", header = None)
@@ -102,9 +102,10 @@ outcome_var = 0
 #model = svm.SVC(kernel='linear')
 #model = LogisticRegression(max_iter=500)
 #model = sefr.SEFR()
-model = linboostclassifier()
+#model = linboostclassifier()
 #model = KNeighborsClassifier()
 
+model = LinBoostClassifier(n_estimators=10)
 classification_model(model, df, predictor_var, outcome_var)
 stop = timeit.default_timer()
 print('Time: ', stop - start)

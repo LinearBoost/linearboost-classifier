@@ -18,14 +18,14 @@ from sklearn import metrics
 from sklearn import svm
 from sklearn.neighbors import KNeighborsClassifier
 import SEFRMulticlass as sefr
-from SEFRMulticlass import linboostclassifier
+from SEFRMulticlass import LinBoostClassifier
 
 
 import timeit
 
 #df = pd.read_csv("./Datasets/CNAE-9.csv", header = None)
-#df = pd.read_csv("./Datasets/Wave5000.csv", header = None)
-df = pd.read_csv("./Datasets/Semeion.csv", header = None)
+df = pd.read_csv("D:/SEFR/Multiclass Classification/Datasets/Wave5000.csv", header = None)
+#df = pd.read_csv("D:/SEFR/Multiclass Classification/Datasets/Semeion.csv", header = None)
 #df = pd.read_csv("./Datasets/MNIST.csv", header = None)
 
 
@@ -86,7 +86,9 @@ outcome_var = 0
 #model = GaussianNB()
 #model = OneVsRestClassifier(svm.SVC(kernel='linear'))
 #model = sefr.SEFR()
-model = linboostclassifier()
+#model = linboostclassifier()
+model = LinBoostClassifier(n_estimators=10)
+
 
 classification_model(model, df, predictor_var, outcome_var)
 stop = timeit.default_timer()
