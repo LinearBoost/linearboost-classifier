@@ -50,8 +50,8 @@ def classification_model(model, data, predictors, outcome):
 
         #adaboost_sefr = AdaBoostClassifier(estimator=model, n_estimators=2000, random_state=0, algorithm="SAMME")
         #bagging adaboost_sefr = BaggingClassifier(base_estimator=model, n_estimators=100, random_state=0)
-        adaboost_sefr = GradientBoostingClassifier(init=model, n_estimators=200)
-        adaboost_sfr = model
+        #adaboost_sefr = GradientBoostingClassifier(init=model, n_estimators=200)
+        adaboost_sefr = model
         #adaboost_sefr = model
 
         adaboost_sefr.fit(X_train, y_train)
