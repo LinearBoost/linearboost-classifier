@@ -8,7 +8,7 @@ class SEFR(BaseEstimator):
         self.weights = []
         self.bias = 0
         self.classes_ = np.array([0, 1])
-        self.scaler = MinMaxScaler(feature_range=(0, 1))
+        #self.scaler = MinMaxScaler(feature_range=(0, 1))
         self.label_encoder = LabelEncoder()
 
     def fit(self, train_predictors, train_target, sample_weight=None):
@@ -96,7 +96,7 @@ class SEFR(BaseEstimator):
         ----------
         prediction probabilities in numpy array
         """
-        X = self.scaler.transform(test_predictors)
+        X = test_predictors
         if isinstance(test_predictors, list):
             X = np.array(test_predictors, dtype="float32")
             
@@ -104,15 +104,18 @@ class SEFR(BaseEstimator):
         
         #print('llllll', linear_output)
         #exit()
-        #pred_proba = 1 / (1 + np.exp(-linear_output))
-        #pred_proba = np.exp(linear_output) / (np.exp(linear_output) + np.exp(-linear_output))
-        #print(pred_proba)
-        #return np.column_stack((1 - pred_proba, pred_proba))
+# =============================================================================
+#         pred_proba = 1 / (1 + np.exp(-linear_output))
+#         pred_proba = np.exp(linear_output) / (np.exp(linear_output) + np.exp(-linear_output))
+#         #print(pred_proba)
+#         return np.column_stack((1 - pred_proba, pred_proba))
+# =============================================================================
     
 
         temp = np.dot(X, self.weights)
         score = (temp - self.bias) / np.linalg.norm(self.weights)
         pred_proba = 1 / (1 + np.exp(-score))
+        #print(pred_proba)
         return np.column_stack((1 - pred_proba, pred_proba))
 
 
@@ -124,7 +127,8 @@ class LinBoostClassifier(AdaBoostClassifier):
 
 
     def fit(self, X, y, sample_weight=None):
-        X = self.scaler.fit_transform(X)
+        self.scaler.fit(X)
+        X = self.scaler.transform(X)
         self.label_encoder.fit(y)
         y = self.label_encoder.transform(y)
         return super().fit(X, y, sample_weight)
@@ -135,7 +139,7 @@ class LinBoostClassifier(AdaBoostClassifier):
         return self.label_encoder.inverse_transform(y_pred)
     
     def predict_proba(self, X):
-        X = self.scaler.fit_transform(X)
+        X = self.scaler.transform(X)
         return super().predict_proba(X)
     
     

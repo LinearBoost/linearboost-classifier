@@ -21,16 +21,28 @@ import SEFRMulticlass as sefr
 from SEFRMulticlass import LinBoostClassifier
 
 
+
 import timeit
 
 #df = pd.read_csv("./Datasets/CNAE-9.csv", header = None)
-df = pd.read_csv("D:/SEFR/Multiclass Classification/Datasets/Wave5000.csv", header = None)
+#df = pd.read_csv("D:/SEFR/Multiclass Classification/Datasets/Wave5000.csv", header = None)
 #df = pd.read_csv("D:/SEFR/Multiclass Classification/Datasets/Semeion.csv", header = None)
 #df = pd.read_csv("./Datasets/MNIST.csv", header = None)
+
+#print(df.iloc[:,1])
 
 
 df = df.fillna(df.mean())
 
+cat_features = ['cp', 'restecg']
+for f in cat_features:
+    df_onehot = pd.get_dummies(df[f], prefix=f)
+    df = df.drop(f, axis=1)
+    df = pd.concat([df_onehot, df], axis=1)
+
+#print(df.columns)
+
+df = df.fillna(df.mean())
 
 
 
@@ -42,10 +54,19 @@ def classification_model(model, data, predictors, outcome):
     error = []
     errs = []
     for train_index, test_index in kf.split(data):
-        X_train = data.iloc[train_index,1:]
-        y_train = data.iloc[train_index, 0]
-        X_test = data.iloc[test_index,1:]
-        y_test = data.iloc[test_index,0]
+# =============================================================================
+#         X_train = data.iloc[train_index,1:]
+#         y_train = data.iloc[train_index, 0]
+#         X_test = data.iloc[test_index,1:]
+#         y_test = data.iloc[test_index,0]
+# =============================================================================
+        
+        X_train = data.iloc[train_index,:-1]
+        y_train = data.iloc[train_index, -1]
+        X_test = data.iloc[test_index,:-1]
+        y_test = data.iloc[test_index,-1]
+        
+        #print(y_test)
         
 
         #adaboost_sefr = AdaBoostClassifier(estimator=model, n_estimators=2000, random_state=0, algorithm="SAMME")
@@ -69,30 +90,33 @@ def classification_model(model, data, predictors, outcome):
         
         fold = fold + 1
         stop = timeit.default_timer()
-        print('Time: ', stop - start)
+        #print('Time: ', stop - start)
 
         
-    print("Cross-Validation Accuracy Score: %s" % "{0:.3%}".format(np.mean(error)))
-    print("Cross-Validation F1 Score: %s" % "{0:.3%}".format(np.mean(errs)))
+    print("Cross-Validation Accuracy Score: %s" % "{0:.2%}".format(np.mean(error)))
+    print("Cross-Validation F1 Score: %s" % "{0:.2%}".format(np.mean(errs)))
 
 predictor_var = []
 outcome_var = 0
 
-#model = lgb.LGBMClassifier()
-#model = XGBClassifier()
-#model = CatBoostClassifier(iterations=50, loss_function="MultiClass")
-#model = tree.DecisionTreeClassifier()
-#model = RandomForestClassifier()
-#model = GaussianNB()
-#model = OneVsRestClassifier(svm.SVC(kernel='linear'))
-#model = sefr.SEFR()
-#model = linboostclassifier()
-model = LinBoostClassifier(n_estimators=5)
 
-
-classification_model(model, df, predictor_var, outcome_var)
-stop = timeit.default_timer()
-print('Time: ', stop - start)
+for i in [5, 10, 20, 50, 100, 200, 500, 1000]    :
+    #model = lgb.LGBMClassifier()
+    model = XGBClassifier(n_estimators=i)
+    #model = CatBoostClassifier(iterations=50, loss_function="MultiClass")
+    #model = tree.DecisionTreeClassifier()
+    #model = RandomForestClassifier()
+    #model = GaussianNB()
+    #model = OneVsRestClassifier(svm.SVC(kernel='linear'))
+    #model = sefr.SEFR()
+    #model = linboostclassifier()
+    #model = LinBoostClassifier(n_estimators=5)
+    
+    print(i)
+    classification_model(model, df, predictor_var, outcome_var)
+    stop = timeit.default_timer()
+    print('Time: ', stop - start)
+    print('*'*65)
 
 
 
