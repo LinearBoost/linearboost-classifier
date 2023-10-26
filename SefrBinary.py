@@ -10,6 +10,8 @@ class SEFR(BaseEstimator):
         self.classes_ = np.array([0, 1])
         #self.scaler = MinMaxScaler(feature_range=(0, 1))
         self.label_encoder = LabelEncoder()
+        self.max = 0
+        self.min = 0
 
     def fit(self, train_predictors, train_target, sample_weight=None):
         """
@@ -58,6 +60,12 @@ class SEFR(BaseEstimator):
         neg_score_avg = np.average(sum_scores[y == 0], weights=sample_weight[y == 0])
 
         self.bias = (neg_label_count * pos_score_avg + pos_label_count * neg_score_avg) / (neg_label_count + pos_label_count)
+        
+        self.max = max(sum_scores)
+        self.min = min(sum_scores)
+        
+        
+
         #print(sample_weight)
         #print(self.weights, self.bias)
         
@@ -114,9 +122,20 @@ class SEFR(BaseEstimator):
 
         temp = np.dot(X, self.weights)
         score = (temp - self.bias) / np.linalg.norm(self.weights)
+        #score = (temp - self.bias) / self.max
         pred_proba = 1 / (1 + np.exp(-score))
+        #pred_proba = (np.tanh(score) + 1) / 2
         #print(pred_proba)
         return np.column_stack((1 - pred_proba, pred_proba))
+
+
+        
+    
+        # to be tested later
+        #score = ((temp - self.bias) - self.min) / (self.max - self.min)
+        #pred_proba = score
+        #print(pred_proba)
+        #return np.column_stack((1 - pred_proba, pred_proba))
 
 
 class LinBoostClassifier(AdaBoostClassifier):

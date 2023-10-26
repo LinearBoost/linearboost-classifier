@@ -32,8 +32,8 @@ from sklearn.ensemble import AdaBoostClassifier, GradientBoostingClassifier, Bag
 
 #df = pd.read_csv("D:/SEFR/Binary Classification/Datasets/GLI_85.csv", header = None)
 #df = pd.read_csv("D:/SEFR/Binary Classification/Datasets/SMK_CAN_187.csv", header = None)
-#df = pd.read_csv("./Datasets/Basehock.csv", header = None)
-#df = pd.read_csv("./Datasets/Gisette.csv", header = None)
+#df = pd.read_csv("D:/SEFR/Binary Classification/Datasets/Basehock.csv", header = None)
+#df = pd.read_csv("D:/SEFR/Binary Classification/Datasets/Gisette.csv", header = None)
 #df = pd.read_csv("D:/SEFR/Binary Classification/Datasets/Sonar.csv", header = None)
 #df = pd.read_csv("./Datasets/GLI.csv", header = None)
 #df = pd.read_csv("./Datasets/Banknote.csv", header = None)
@@ -42,19 +42,39 @@ from sklearn.ensemble import AdaBoostClassifier, GradientBoostingClassifier, Bag
 #df = pd.read_csv("D:/Datasets/Big Data/SUSY/SUSY - Normalized.csv", header = None)
 #df = pd.read_csv("D:/SEFR/Datasets/HeartAttackAnalysisPrediction.csv")
 #df = pd.read_csv("D:/SEFR/Datasets/wdbc/wdbc.data")
-df = pd.read_csv("D:/SEFR/Datasets/Mushroom/agaricus-lepiota.data", header=None)
+#df = pd.read_csv("D:/SEFR/Datasets/Mushroom/agaricus-lepiota.data", header=None)
+
+#df = pd.read_csv("D:/SEFR/Datasets/adult.data", header=None)
+
+#df = pd.read_csv("D:/SEFR/Datasets/creditcard.csv")
+df = pd.read_csv("D:/SEFR/Datasets/spambase.data", header=None)
 
 
+print(df)
+print(df.dtypes)
 
-cat_features = range(1, 23)
-for f in cat_features:
-    df_onehot = pd.get_dummies(df[f], prefix=f)
-    df = df.drop(f, axis=1)
-    df = pd.concat([df_onehot, df], axis=1)
+print(df.columns)
 
-#print(df)
+#exit()
+#print(df[14])
+#print(df.dtypes)
 #exit()
 
+
+
+# =============================================================================
+# cat_features = [1, 3, 5, 6, 7, 8, 9, 13]#range(1, 23)
+# cat_features = ['cp', 'restecg']
+# for f in cat_features:
+#     df_onehot = pd.get_dummies(df[f], prefix=f)
+#     df = df.drop(f, axis=1)
+#     df = pd.concat([df_onehot, df], axis=1)
+# 
+# #print(df)
+# =============================================================================
+#exit()
+
+#df.columns = df.columns.astype(str)
 
 #df = df.fillna(df.mean())
 
@@ -71,18 +91,21 @@ def classification_model(model, data, predictors, outcome):
     errs = []
     for train_index, test_index in kf.split(data):
 
-# =============================================================================
-#         X_train = data.iloc[train_index,0:]
-#         y_train = data.iloc[train_index, 1]
-#         X_test = data.iloc[test_index,2:]
-#         y_test = data.iloc[test_index,1]
-# =============================================================================
-        
         X_train = data.iloc[train_index,:-1]
+        #print(X_train)
+        #print('salam')
+        #exit()
         y_train = data.iloc[train_index, -1]
         X_test = data.iloc[test_index,:-1]
         y_test = data.iloc[test_index,-1]
-        
+# =============================================================================
+#         
+#         X_train = data.iloc[train_index,:-1]
+#         y_train = data.iloc[train_index, -1]
+#         X_test = data.iloc[test_index,:-1]
+#         y_test = data.iloc[test_index,-1]
+#         
+# =============================================================================
         #print(X_train)
         #print(y_train)
         #adaboost_sefr = model
@@ -115,7 +138,7 @@ outcome_var = 0
 
 for i in [5, 10, 20, 50, 100, 200, 500, 1000]:
     #model = XGBClassifier(n_estimators=i)
-    model = lgb.LGBMClassifier(n_estimators=i, verbose=-1)
+    #model = lgb.LGBMClassifier(n_estimators=i, verbose=-1)
     #model = CatBoostClassifier(n_estimators=i, verbose=0)
     #model = tree.DecisionTreeClassifier()
     #model = RandomForestClassifier()
@@ -126,7 +149,7 @@ for i in [5, 10, 20, 50, 100, 200, 500, 1000]:
     #model = sefr.SEFR()
     #model = linboostclassifier()
     #model = KNeighborsClassifier()
-    #model = LinBoostClassifier(n_estimators=i, algorithm="SAMME")
+    model = LinBoostClassifier(n_estimators=i, algorithm="SAMME.R")
     print(i)
     classification_model(model, df, predictor_var, outcome_var)
     stop = timeit.default_timer()

@@ -28,7 +28,6 @@ import timeit
 #df = pd.read_csv("D:/SEFR/Multiclass Classification/Datasets/Wave5000.csv", header = None)
 #df = pd.read_csv("D:/SEFR/Multiclass Classification/Datasets/Semeion.csv", header = None)
 #df = pd.read_csv("./Datasets/MNIST.csv", header = None)
-
 #print(df.iloc[:,1])
 
 
