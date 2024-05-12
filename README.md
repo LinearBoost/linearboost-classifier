@@ -1,7 +1,8 @@
 
-<img src=https://i.ibb.co/4f3THnf/Logo-Linearboost.webp width=300/>
 LinearBoost Classifier
 =======================
+
+<img src=https://i.ibb.co/4f3THnf/Logo-Linearboost.webp width=300/>
 
 LinearBoost is a classification algorithm that is designed to boost a linear classifier algorithm named SEFR. It is an efficient classification algorithm that can result in state-of-the-art accuracy and F1 score. It has the following advantages:
 
