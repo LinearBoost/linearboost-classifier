@@ -15,6 +15,10 @@ Get Started and Documentation
 The documentation is available at https://linearboost.readthedocs.io/.
 
 
+Reference Paper
+-----------------------------
+The paper is written by Hamidreza Keshavarz (Independent Researcher based in Berlin) and Reza Rawassizadeh (Department of Computer Science, Metropolitan college, Boston University, United States). It will be available soon.
+
 License
 -------
 
