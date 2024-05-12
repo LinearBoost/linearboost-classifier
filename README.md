@@ -1,5 +1,5 @@
 
-![Logo](https://i.ibb.co/4f3THnf/Logo-Linearboost.webp)
+<img src=https://i.ibb.co/4f3THnf/Logo-Linearboost.webp width=300/>
 LinearBoost Classifier
 =======================
 
