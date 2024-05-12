@@ -123,7 +123,7 @@ Runtime to achieve the best result:
 
 Reference Paper
 -----------------------------
-The paper is written by Hamidreza Keshavarz (Independent Researcher based in Berlin) and Reza Rawassizadeh (Department of Computer Science, Metropolitan college, Boston University, United States). It will be available soon.
+The paper is written by Hamidreza Keshavarz (Independent Researcher based in Berlin, Germany) and Reza Rawassizadeh (Department of Computer Science, Metropolitan college, Boston University, United States). It will be available soon.
 
 License
 -------
