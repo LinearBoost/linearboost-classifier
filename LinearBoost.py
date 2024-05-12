@@ -4,33 +4,29 @@ from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from sklearn.ensemble import AdaBoostClassifier, GradientBoostingClassifier
 
 class SEFR(BaseEstimator):
+    """
+    This is the base classification algorithm, SEFR.
+    """
     def __init__(self):
         self.weights = []
         self.bias = 0
         self.classes_ = np.array([0, 1])
-        #self.scaler = MinMaxScaler(feature_range=(0, 1))
         self.label_encoder = LabelEncoder()
         self.max = 0
         self.min = 0
 
     def fit(self, train_predictors, train_target, sample_weight=None):
         """
-        This is used for training the classifier on data.
+        This is for training the SEFR classifier.
         Parameters
         ----------
         train_predictors : float, either list or numpy array
-            are the main data in DataFrame
+            The data to be trained on
         train_target : integer, numpy array
-            labels, should consist of 0s and 1s
+            These are the labels, and should be either 0 or 1.
         """
-        #train_predictors = self.scaler.fit_transform(train_predictors)
-        
-        #self.label_encoder.fit(train_target)
-        #encoded_labels = self.label_encoder.transform(train_target)
-        #print(train_predictors)
         
         X = np.array(train_predictors, dtype="float32")
-        #y = np.array(encoded_labels, dtype="int32")
         y = np.array(train_target, dtype="int32")
 
         if sample_weight is not None:
@@ -43,9 +39,7 @@ class SEFR(BaseEstimator):
 
         pos_indices = X[pos_labels, :]
         neg_indices = X[neg_labels, :]
-        
-        
-        
+
         avg_pos = np.average(pos_indices, axis=0, weights=sample_weight[pos_labels])
         avg_neg = np.average(neg_indices, axis=0, weights=sample_weight[neg_labels])
 
@@ -64,33 +58,23 @@ class SEFR(BaseEstimator):
         self.max = max(sum_scores)
         self.min = min(sum_scores)
         
-        
-
-        #print(sample_weight)
-        #print(self.weights, self.bias)
-        
-        
-        
     def predict(self, test_predictors):
         """
-        This is for prediction. When the model is trained, it can be applied on the test data.
+        This is for predicting labels on the test data using the trained model.
         Parameters
         ----------
         test_predictors: either list or ndarray, two dimensional
-            the data without labels in
+            This is the test data
         Returns
         ----------
         predictions in numpy array
         """
-        #X = self.scaler.transform(test_predictors)
         X = test_predictors
         if isinstance(test_predictors, list):
             X = np.array(test_predictors, dtype="float32")
 
         temp = np.dot(X, self.weights)
         preds = np.where(temp <= self.bias, 0 , 1)
-        #original_preds = self.label_encoder.inverse_transform(preds)
-        #return original_preds 
         return preds
     
     def predict_proba(self, test_predictors):
@@ -109,36 +93,25 @@ class SEFR(BaseEstimator):
             X = np.array(test_predictors, dtype="float32")
             
         linear_output = np.dot(X, self.weights) - self.bias
-        
-        #print('llllll', linear_output)
-        #exit()
-# =============================================================================
-#         pred_proba = 1 / (1 + np.exp(-linear_output))
-#         pred_proba = np.exp(linear_output) / (np.exp(linear_output) + np.exp(-linear_output))
-#         #print(pred_proba)
-#         return np.column_stack((1 - pred_proba, pred_proba))
-# =============================================================================
-    
 
         temp = np.dot(X, self.weights)
         score = (temp - self.bias) / np.linalg.norm(self.weights)
-        #score = (temp - self.bias) / self.max
         pred_proba = 1 / (1 + np.exp(-score))
-        #pred_proba = (np.tanh(score) + 1) / 2
-        #print(pred_proba)
+
         return np.column_stack((1 - pred_proba, pred_proba))
 
 
-        
-    
-        # to be tested later
-        #score = ((temp - self.bias) - self.min) / (self.max - self.min)
-        #pred_proba = score
-        #print(pred_proba)
-        #return np.column_stack((1 - pred_proba, pred_proba))
+class LinearBoostClassifier(AdaBoostClassifier):
+    """
+    This is the main LinearBoostClassifier algorithm.
+    Parameters
+    ----------
+    n_estimators: Total number of estimators. 
+    learning_rate: The learning rate of algorithm
+    algorithm: Whether it should be SAMME or SAMME.R 
+    random_state: The random state 
 
-
-class LinBoostClassifier(AdaBoostClassifier):
+    """
     def __init__(self, n_estimators=200, learning_rate=1.0, algorithm='SAMME', random_state=9):
         self.scaler = MinMaxScaler(feature_range=(0, 1))
         self.label_encoder = LabelEncoder()
@@ -161,6 +134,3 @@ class LinBoostClassifier(AdaBoostClassifier):
         X = self.scaler.transform(X)
         return super().predict_proba(X)
     
-    
-def linboostclassifier(n_estimators=200, random_state=0, algorithm="SAMME"):
-    return AdaBoostClassifier(estimator=SEFR(), n_estimators=n_estimators, random_state=random_state, algorithm=algorithm)
