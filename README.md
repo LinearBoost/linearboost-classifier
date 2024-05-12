@@ -17,7 +17,7 @@ The documentation is available at https://linearboost.readthedocs.io/.
 Results
 -------
 
-F-Score results on [Breast Cancer Wisconsin (Diagnostic)](https://archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic):
+F-Score results on each number of estimators on [Breast Cancer Wisconsin (Diagnostic)](https://archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic):
 
 |                |   5 est.   |  10 est.   |  20 est.   |  50 est.   | 100 est.   | 200 est.   | 500 est.   | 1000 est.  |
 |----------------|------------|------------|------------|------------|------------|------------|------------|------------|
@@ -37,6 +37,15 @@ Runtime to achieve the best result:
 | LightGBM       | 2.79   |
 | CatBoost       | 38.25   |
 
+F-Score results on each number of estimators on [Heart Disease](https://archive.ics.uci.edu/dataset/45/heart+disease):
+
+|                |   5 est.   |  10 est.   |  20 est.   |  50 est.   | 100 est.   | 200 est.   | 500 est.   | 1000 est.  |
+|----------------|------------|------------|------------|------------|------------|------------|------------|------------|
+| XGBoost        | 0.771211   | 0.797882   | 0.798590   | 0.799304   | 0.792604   | 0.792818   | 0.785654   | 0.785643   |
+| LinearBoost (SAMME.R) | 0.812511   | 0.831613   | 0.834764   | 0.816657   | 0.793616   | 0.730861   | 0.516908   | 0.365107   |
+| LinearBoost (SAMME) | 0.812472   | 0.813964   | 0.814151   | 0.814151   | 0.814151   | 0.814151   | 0.814151   | 0.814151   |
+| LightGBM       | 0.817035   | 0.808602   | 0.819666   | 0.812094   | 0.812254   | 0.805578   | 0.795899   | 0.785490   |
+| CatBoost       | 0.819977   | 0.832422   | 0.824360   | 0.839461   | 0.839286   | 0.813326   | 0.825896   | 0.829023   |
 
 
 
