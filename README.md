@@ -29,7 +29,7 @@ F-Score results on each number of estimators on [Breast Cancer Wisconsin (Diagno
 
 Runtime to achieve the best result:
 
-|                | Time (sec.)|
+| Method         | Time (sec.)|
 |----------------|------------|
 | XGBoost        | 1.29   |
 | LinearBoost (SAMME.R) | 2.24   |
@@ -50,7 +50,7 @@ F-Score results on each number of estimators on [Heart Disease](https://archive.
 
 Runtime to achieve the best result:
 
-|                | Time (sec.)|
+| Method         | Time (sec.)|
 |----------------|------------|
 | XGBoost        | 0.44   |
 | LinearBoost (SAMME.R) | 0.28   |
@@ -70,7 +70,7 @@ F-Score results on each number of estimators on [Statlog (German Credit Data)](h
 
 Runtime to achieve the best result:
 
-|                | Time (sec.)|
+| Method         | Time (sec.)|
 |----------------|------------|
 | XGBoost        | 4.18   |
 | LinearBoost (SAMME.R) | 0.81   |
@@ -83,13 +83,21 @@ F-Score results on each number of estimators on [CDC Diabetes Health Indicators]
 
 | Method         |   5 est.   |  10 est.   |  20 est.   |  50 est.   | 100 est.   | 200 est.   | 500 est.   | 1000 est.  |
 |----------------|------------|------------|------------|------------|------------|------------|------------|------------|
-| XGBoost      | 0.526730   | 0.562816   | 0.587322   | 0.592467   | 0.593964   | 0.594074   | 0.598566   | 0.603016   |
-| LinearBoost (SAMME.R)      | 0.652007   | 0.661966   | 0.663046   | 0.592903   | 0.469198   | 0.462557   | 0.462557   | 0.462557   |
-| LinearBoost (SAMME)      | 0.637149   | 0.637149   | 0.637149   | 0.637149   | 0.637149   | 0.637149   | 0.637149   | 0.637149   |
-| LightGBM      | 0.462557   | 0.462557   | 0.529107   | 0.580976   | 0.588251   | 0.590069   | 0.591296   | 0.591785   |
-| CatBoost      | 0.570664   | 0.584894   | 0.590143   | 0.590830   | 0.592464   | 0.593707   | 0.592682   | 0.592633   |
+| XGBoost      | 0.526730   | 0.562816   | 0.587322   | 0.592467   | 0.593964   | 0.594074   | 0.598566   | **0.603016**   |
+| LinearBoost (SAMME.R)      | 0.652007   | 0.661966   | **0.663046**   | 0.592903   | 0.469198   | 0.462557   | 0.462557   | 0.462557   |
+| LinearBoost (SAMME)      | **0.637149**   | 0.637149   | 0.637149   | 0.637149   | 0.637149   | 0.637149   | 0.637149   | 0.637149   |
+| LightGBM      | 0.462557   | 0.462557   | 0.529107   | 0.580976   | 0.588251   | 0.590069   | 0.591296   | **0.591785**   |
+| CatBoost      | 0.570664   | 0.584894   | 0.590143   | 0.590830   | 0.592464   | **0.593707**   | 0.592682   | 0.592633   |
 
+Runtime to achieve the best result:
 
+| Method         | Time (sec.)|
+|----------------|------------|
+| XGBoost        | 395.36   |
+| LinearBoost (SAMME.R) | 221.21   |
+| LinearBoost (SAMME) | 12.42   |
+| LightGBM       | 307.72   |
+| CatBoost       | 192.80   |
 
 |                |   5 est.   |  10 est.   |  20 est.   |  50 est.   | 100 est.   | 200 est.   | 500 est.   | 1000 est.  |
 |----------------|------------|------------|------------|------------|------------|------------|------------|------------|
