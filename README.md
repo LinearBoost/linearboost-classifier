@@ -124,6 +124,15 @@ Runtime to achieve the best result:
 | LinearBoost (SAMME.R) | 3.58   |
 | LinearBoost (SAMME) | 0.86   |
 
+Future Developments
+-----------------------------
+These are not supported in this current version, but are in the future plans
+- Adding a custom loss function
+- Supporting class weights
+- A replacement for scaling
+- Supporting categorical variables
+- Adding regression
+
 Reference Paper
 -----------------------------
 The paper is written by Hamidreza Keshavarz (Independent Researcher based in Berlin, Germany) and Reza Rawassizadeh (Department of Computer Science, Metropolitan college, Boston University, United States). It will be available soon.
