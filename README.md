@@ -126,7 +126,7 @@ Runtime to achieve the best result:
 
 Future Developments
 -----------------------------
-These are not supported in this current version, but are in the future plans
+These are not supported in this current version, but are in the future plans:
 - Adding a custom loss function
 - Supporting class weights
 - A replacement for scaling
