@@ -140,4 +140,4 @@ The paper is written by Hamidreza Keshavarz (Independent Researcher based in Ber
 License
 -------
 
-This project is licensed under the terms of the MIT license. See [LICENSE](https://github.com/microsoft/LightGBM/blob/master/LICENSE) for additional details.
+This project is licensed under the terms of the MIT license. See [LICENSE](https://github.com/LinearBoost/linearboost-classifier/blob/main/LICENSE) for additional details.
