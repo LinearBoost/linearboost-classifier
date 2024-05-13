@@ -17,7 +17,9 @@ The documentation is available at https://linearboost.readthedocs.io/.
 Results
 -------
 
-All of the results are reported based on 10-fold Cross-Validation. 
+** All of the results are reported based on 10-fold Cross-Validation. **
+
+
 F-Score results on each number of estimators on [Breast Cancer Wisconsin (Diagnostic)](https://archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic):
 
 | Method         |   5 est.   |  10 est.   |  20 est.   |  50 est.   | 100 est.   | 200 est.   | 500 est.   | 1000 est.  |
