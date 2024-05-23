@@ -1,7 +1,7 @@
 import numpy as np
-from sklearn.base import BaseEstimator, ClassifierMixin
+from sklearn.base import BaseEstimator
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
-from sklearn.ensemble import AdaBoostClassifier, GradientBoostingClassifier
+from sklearn.ensemble import AdaBoostClassifier
 
 class SEFR(BaseEstimator):
     """
@@ -10,8 +10,6 @@ class SEFR(BaseEstimator):
     def __init__(self):
         self.weights = []
         self.bias = 0
-        self.classes_ = np.array([0, 1])
-        self.label_encoder = LabelEncoder()
         self.max = 0
         self.min = 0
 
