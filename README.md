@@ -8,6 +8,16 @@ LinearBoost is a classification algorithm that is designed to boost a linear cla
 - Low memory footprint
 - Accuracy on par with Gradient Boosting Decision Trees
 
+## Upcoming Release (v0.0.2)
+
+- Expected release date: [Q1 2025]
+- Planned improvements and changes:
+  - Support of custom loss function
+  - Enhanced handling of class weights
+  - Customized handling of the data scalers
+  - Optimized boosting
+  - Improved runtime and scalability
+Stay tuned for the release!
 
 Get Started and Documentation
 -----------------------------
