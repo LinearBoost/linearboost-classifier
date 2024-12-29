@@ -17,7 +17,7 @@ LinearBoost is a classification algorithm that is designed to boost a linear cla
   - Customized handling of the data scalers
   - Optimized boosting
   - Improved runtime and scalability
-  - 
+
 Stay tuned for the release!
 
 Get Started and Documentation
