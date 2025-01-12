@@ -16,10 +16,10 @@ Key Features:
 - Exceptional Speed: Blazing fast training and inference times
 - Resource Efficient: Low memory usage, ideal for large datasets
 
-## 🚀 New Release (v0.0.2) 
+## 🚀 New Release (v0.0.5) 
 
 
-Version 0.0.2 of the **LinearBoost Classifier** is released! This new version introduces several exciting features and improvements:
+Version 0.0.5 of the **LinearBoost Classifier** is released! This new version introduces several exciting features and improvements:
 
 - 🛠️ Support of custom loss function
 - ✅ Enhanced handling of class weights
