@@ -2,16 +2,24 @@
 LinearBoost Classifier
 =======================
 
-LinearBoost is a classification algorithm that is designed to boost a linear classifier algorithm named SEFR. It is an efficient classification algorithm that can result in state-of-the-art accuracy and F1 score. It has the following advantages:
+LinearBoost is a fast and accurate classification algorithm built to enhance the performance of the linear classifier SEFR. It combines efficiency and accuracy, delivering state-of-the-art F1 scores and classification performance.
 
-- Fast training speed
-- Low memory footprint
-- Accuracy on par with Gradient Boosting Decision Trees
+In benchmarks across seven well-known datasets, LinearBoost:
 
-## 🚀 Upcoming Release (v0.0.2) 
+- Outperformed XGBoost on all seven datasets
+- Surpassed LightGBM on five datasets
+- Achieved up to 98% faster runtime compared to both algorithms
+
+Key Features:
+
+- High Accuracy: Comparable to or exceeding Gradient Boosting Decision Trees (GBDTs)
+- Exceptional Speed: Blazing fast training and inference times
+- Resource Efficient: Low memory usage, ideal for large datasets
+
+## 🚀 New Release (v0.0.2) 
 
 
-Version 0.0.2 of the **LinearBoost Classifier** will be released soon! This new version introduces several exciting features and improvements:
+Version 0.0.2 of the **LinearBoost Classifier** is released! This new version introduces several exciting features and improvements:
 
 - 🛠️ Support of custom loss function
 - ✅ Enhanced handling of class weights
@@ -19,7 +27,6 @@ Version 0.0.2 of the **LinearBoost Classifier** will be released soon! This new 
 - ⚡ Optimized boosting
 - 🕒 Improved runtime and scalability
 
-Stay tuned for the release!
 
 Get Started and Documentation
 -----------------------------
