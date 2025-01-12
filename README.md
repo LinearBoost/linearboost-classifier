@@ -8,7 +8,7 @@ In benchmarks across seven well-known datasets, LinearBoost:
 
 - Outperformed XGBoost on all seven datasets
 - Surpassed LightGBM on five datasets
-- Achieved up to 98% faster runtime compared to both algorithms
+- Achieved up to **98% faster runtime** compared to both algorithms
 
 Key Features:
 
