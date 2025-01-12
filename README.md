@@ -64,6 +64,36 @@ The following table presents the F1 scores of LinearBoost in comparison with XGB
 - **Banknote Authentication**: LinearBoost matches the perfect F1 score of **1** achieved by CatBoost.
 - LinearBoost demonstrates consistent performance across diverse datasets, making it a robust and efficient choice for classification tasks.
 
+## Runtime Comparison: Time to Reach Best F1 Score
+
+The following table shows the runtime (in seconds) required by LinearBoost, XGBoost, CatBoost, and LightGBM to achieve their best F1 scores. **Each result is obtained by running Optuna with 200 trials** to optimize the hyperparameters for each algorithm and dataset.
+
+| Dataset                              | XGBoost  | CatBoost | LightGBM | LinearBoost |
+|--------------------------------------|----------|----------|----------|-------------|
+| Breast Cancer Wisconsin (Diagnostic) | 3.22     | 9.68     | 4.52     | 0.30        |
+| Heart Disease                        | 1.13     | 0.60     | 0.51     | 0.49        |
+| Pima Indians Diabetes Database       | 6.86     | 3.50     | 2.52     | 0.16        |
+| Banknote Authentication              | 0.46     | 4.26     | 5.54     | 0.33        |
+| Haberman's Survival                  | 4.41     | 8.28     | 5.72     | 0.11        |
+| Loan Status Prediction               | 0.83     | 97.89    | 28.41    | 0.44        |
+| PCMAC                                | 150.33   | 83.52    | 42.23    | 75.06       |
+
+### Experiment Details
+- **Hyperparameter Optimization**:
+  - Each algorithm was tuned using **Optuna** with **200 trials** per algorithm-dataset pair.
+  - The runtime includes the time to reach the best F1 score using the optimized hyperparameters.
+- **Fair Comparison**: All algorithms were evaluated under their best configurations to ensure consistency.
+
+### Key Highlights
+- **LinearBoost** demonstrates exceptional runtime efficiency while achieving competitive F1 scores:
+  - **Breast Cancer Wisconsin (Diagnostic)**: LinearBoost achieves the best F1 score in just **0.30 seconds**, compared to **3.22 seconds** for XGBoost and **9.68 seconds** for CatBoost.
+  - **Loan Status Prediction**: LinearBoost runs in **0.44 seconds**, outperforming LightGBM (**28.41 seconds**) and CatBoost (**97.89 seconds**).
+- Across most datasets, LinearBoost reduces runtime by up to **98%** compared to XGBoost and LightGBM while maintaining competitive performance.
+
+---
+
+### Why LinearBoost?
+LinearBoost's combination of **runtime efficiency** and **high accuracy** makes it a powerful choice for real-world machine learning tasks, particularly in resource-constrained or real-time applications.
 
 Future Developments
 -----------------------------
