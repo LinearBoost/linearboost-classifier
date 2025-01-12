@@ -98,9 +98,6 @@ LinearBoost's combination of **runtime efficiency** and **high accuracy** makes 
 Future Developments
 -----------------------------
 These are not supported in this current version, but are in the future plans:
-- Adding a custom loss function
-- Supporting class weights
-- A replacement for scaling
 - Supporting categorical variables
 - Adding regression
 
