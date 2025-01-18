@@ -153,6 +153,7 @@ params = {
     'eval_metric': 'F1',
     'cat_features': categorical_cols,
 }
+````
 
 #### LightGBM
 ```python
@@ -175,6 +176,7 @@ params = {
     'cat_l2': trial.suggest_loguniform('cat_l2', 1e-8, 10.0),
     'verbosity': -1,
 }
+````
 
 #### LinearBoost
 ```python
@@ -185,6 +187,7 @@ params = {
     'algorithm': trial.suggest_categorical('algorithm', ['SAMME', 'SAMME.R']),
     'scaler': trial.suggest_categorical('scaler', ['minmax', 'robust', 'quantile-uniform', 'quantile-normal']),
 }
+````
 
 
 ### Why LinearBoost?
