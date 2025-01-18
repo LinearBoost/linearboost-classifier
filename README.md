@@ -131,7 +131,7 @@ params = {
     'reg_alpha': trial.suggest_loguniform('reg_alpha', 1e-8, 1.0),
     'reg_lambda': trial.suggest_loguniform('reg_lambda', 1e-8, 1.0),
     'enable_categorical': True,
-    'eval_metric': 'logloss',
+    'eval_metric': 'logloss'
 }
 ````
 
@@ -151,7 +151,7 @@ params = {
     'rsm': trial.suggest_uniform('rsm', 0.1, 1.0),
     'loss_function': 'Logloss',
     'eval_metric': 'F1',
-    'cat_features': categorical_cols,
+    'cat_features': categorical_cols
 }
 ````
 
@@ -174,7 +174,7 @@ params = {
     'min_split_gain': trial.suggest_loguniform('min_split_gain', 1e-8, 1.0),
     'cat_smooth': trial.suggest_int('cat_smooth', 1, 100),
     'cat_l2': trial.suggest_loguniform('cat_l2', 1e-8, 10.0),
-    'verbosity': -1,
+    'verbosity': -1
 }
 ````
 
@@ -185,7 +185,7 @@ params = {
     'n_estimators': trial.suggest_int('n_estimators', 10, 200),
     'learning_rate': trial.suggest_loguniform('learning_rate', 0.01, 1),
     'algorithm': trial.suggest_categorical('algorithm', ['SAMME', 'SAMME.R']),
-    'scaler': trial.suggest_categorical('scaler', ['minmax', 'robust', 'quantile-uniform', 'quantile-normal']),
+    'scaler': trial.suggest_categorical('scaler', ['minmax', 'robust', 'quantile-uniform', 'quantile-normal'])
 }
 ````
 
