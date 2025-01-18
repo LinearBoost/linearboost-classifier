@@ -133,6 +133,7 @@ params = {
     'enable_categorical': True,
     'eval_metric': 'logloss',
 }
+````
 
 #### CatBoost
 ```python
