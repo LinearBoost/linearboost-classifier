@@ -38,10 +38,10 @@ The documentation is available at https://linearboost.readthedocs.io/.
 The following parameters yielded optimal results during testing. All results are based on 10-fold Cross-Validation:
 
 - **`n_estimators`**:  
-  A range of 50 to 500 is suggested, with higher values potentially improving performance at the cost of longer training times.
+  A range of 10 to 200 is suggested, with higher values potentially improving performance at the cost of longer training times.
 
 - **`learning_rate`**:  
-  Values between 0.01 and 0.3 typically perform well. Adjust based on the dataset's complexity and noise.
+  Values between 0.01 and 1 typically perform well. Adjust based on the dataset's complexity and noise.
 
 - **`algorithm`**:  
   Use either `SAMME` or `SAMME.R`. The choice depends on the specific problem:
