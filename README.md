@@ -114,7 +114,77 @@ The following table shows the runtime (in seconds) required by LinearBoost, XGBo
   - **Loan Status Prediction**: LinearBoost runs in **0.44 seconds**, outperforming LightGBM (**28.41 seconds**) and CatBoost (**97.89 seconds**).
 - Across most datasets, LinearBoost reduces runtime by up to **98%** compared to XGBoost and LightGBM while maintaining competitive performance.
 
----
+### Tuned Hyperparameters
+
+#### XGBoost
+```python
+params = {
+    'objective': 'binary:logistic',
+    'use_label_encoder': False,
+    'n_estimators': trial.suggest_int('n_estimators', 20, 1000),
+    'max_depth': trial.suggest_int('max_depth', 1, 20),
+    'learning_rate': trial.suggest_uniform('learning_rate', 0.01, 0.7),
+    'gamma': trial.suggest_loguniform('gamma', 1e-8, 1.0),
+    'min_child_weight': trial.suggest_int('min_child_weight', 1, 10),
+    'subsample': trial.suggest_float('subsample', 0.5, 1.0),
+    'colsample_bytree': trial.suggest_float('colsample_bytree', 0.5, 1.0),
+    'reg_alpha': trial.suggest_loguniform('reg_alpha', 1e-8, 1.0),
+    'reg_lambda': trial.suggest_loguniform('reg_lambda', 1e-8, 1.0),
+    'enable_categorical': True,
+    'eval_metric': 'logloss',
+}
+
+#### CatBoost
+```python
+
+params = {
+    'iterations': trial.suggest_int('iterations', 50, 500),
+    'depth': trial.suggest_int('depth', 1, 16),
+    'learning_rate': trial.suggest_loguniform('learning_rate', 1e-3, 0.5),
+    'l2_leaf_reg': trial.suggest_loguniform('l2_leaf_reg', 1e-8, 10.0),
+    'random_strength': trial.suggest_loguniform('random_strength', 1e-8, 10.0),
+    'bagging_temperature': trial.suggest_loguniform('bagging_temperature', 1e-1, 10.0),
+    'border_count': trial.suggest_int('border_count', 32, 255),
+    'grow_policy': trial.suggest_categorical('grow_policy', ['SymmetricTree', 'Depthwise', 'Lossguide']),
+    'min_data_in_leaf': trial.suggest_int('min_data_in_leaf', 1, 100),
+    'rsm': trial.suggest_uniform('rsm', 0.1, 1.0),
+    'loss_function': 'Logloss',
+    'eval_metric': 'F1',
+    'cat_features': categorical_cols,
+}
+
+#### LightGBM
+```python
+
+params = {
+    'objective': 'binary',
+    'metric': 'binary_logloss',
+    'boosting_type': trial.suggest_categorical('boosting_type', ['gbdt', 'dart', 'goss']),
+    'num_leaves': trial.suggest_int('num_leaves', 2, 256),
+    'learning_rate': trial.suggest_loguniform('learning_rate', 1e-3, 0.1),
+    'n_estimators': trial.suggest_int('n_estimators', 20, 1000),
+    'max_depth': trial.suggest_int('max_depth', 1, 20),
+    'min_child_samples': trial.suggest_int('min_child_samples', 1, 100),
+    'subsample': trial.suggest_uniform('subsample', 0.5, 1.0),
+    'colsample_bytree': trial.suggest_uniform('colsample_bytree', 0.5, 1.0),
+    'reg_alpha': trial.suggest_loguniform('reg_alpha', 1e-8, 10.0),
+    'reg_lambda': trial.suggest_loguniform('reg_lambda', 1e-8, 10.0),
+    'min_split_gain': trial.suggest_loguniform('min_split_gain', 1e-8, 1.0),
+    'cat_smooth': trial.suggest_int('cat_smooth', 1, 100),
+    'cat_l2': trial.suggest_loguniform('cat_l2', 1e-8, 10.0),
+    'verbosity': -1,
+}
+
+#### LinearBoost
+```python
+
+params = {
+    'n_estimators': trial.suggest_int('n_estimators', 10, 200),
+    'learning_rate': trial.suggest_loguniform('learning_rate', 0.01, 1),
+    'algorithm': trial.suggest_categorical('algorithm', ['SAMME', 'SAMME.R']),
+    'scaler': trial.suggest_categorical('scaler', ['minmax', 'robust', 'quantile-uniform', 'quantile-normal']),
+}
+
 
 ### Why LinearBoost?
 LinearBoost's combination of **runtime efficiency** and **high accuracy** makes it a powerful choice for real-world machine learning tasks, particularly in resource-constrained or real-time applications.
