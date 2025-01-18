@@ -33,10 +33,34 @@ Get Started and Documentation
 
 The documentation is available at https://linearboost.readthedocs.io/.
 
+## Recommended Parameters for LinearBoost
+
+The following parameters yielded optimal results during testing. All results are based on 10-fold Cross-Validation:
+
+- **`n_estimators`**:  
+  A range of 50 to 500 is suggested, with higher values potentially improving performance at the cost of longer training times.
+
+- **`learning_rate`**:  
+  Values between 0.01 and 0.3 typically perform well. Adjust based on the dataset's complexity and noise.
+
+- **`algorithm`**:  
+  Use either `SAMME` or `SAMME.R`. The choice depends on the specific problem:
+  - `SAMME`: May be better for datasets with clearer separations between classes.
+  - `SAMME.R`: Can handle more nuanced class probabilities.
+
+- **`scaler`**:  
+  The following scaling methods are recommended based on dataset characteristics:
+  - `minmax`: Best for datasets where features are on different scales but bounded.
+  - `robust`: Effective for datasets with outliers.
+  - `quantile-uniform`: Normalizes features to a uniform distribution.
+  - `quantile-normal`: Normalizes features to a normal (Gaussian) distribution.
+
+These parameters should serve as a solid starting point for most datasets. For fine-tuning, consider using hyperparameter optimization tools like [Optuna](https://optuna.org/).
+
 Results
 -------
 
-All of the results are reported based on 10-fold Cross-Validation.
+All of the results are reported based on 10-fold Cross-Validation. For LinearBoost, these parameters were tested:
 
 ## Performance Comparison: F1 Scores Across Datasets
 
