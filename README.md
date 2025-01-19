@@ -60,7 +60,7 @@ These parameters should serve as a solid starting point for most datasets. For f
 Results
 -------
 
-All of the results are reported based on 10-fold Cross-Validation. For LinearBoost, these parameters were tested:
+All of the results are reported based on 10-fold Cross-Validation. The weighted F1 score is reported, i.e. f1_score(y_valid, y_pred, average = 'weighted').
 
 ## Performance Comparison: F1 Scores Across Datasets
 
