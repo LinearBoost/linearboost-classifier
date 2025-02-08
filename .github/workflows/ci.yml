@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+    contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v5
+
+    - name: Install dependencies
+      run: uv sync
+
+    - name: Run ruff linter
+      run: uv run ruff check --output-format=github .
+
+    - name: Run ruff format check
+      run: uv run ruff format --check --diff .
+
+    - name: Run tests
+      run: uv run pytest -vv
