@@ -203,18 +203,30 @@ class LinearBoostClassifier(AdaBoostClassifier):
 
         def __sklearn_tags__(self):
             tags = super().__sklearn_tags__()
+            tags.input_tags.sparse = False
             tags.target_tags.required = True
             tags.classifier_tags.multi_class = False
+            tags.classifier_tags.poor_score = True
             return tags
 
     def _more_tags(self) -> dict[str, bool]:
-        return {"binary_only": True, "requires_y": True, "poor_score": True}
+        return {
+            "binary_only": True,
+            "requires_y": True,
+            "poor_score": True,
+            "_xfail_checks": {
+                "check_sample_weight_equivalence_on_dense_data": (
+                    "In LinearBoostClassifier, setting a sample's weight to 0 can produce a different "
+                    "result than omitting the sample. Such samples intentionally still affect the data scaling process."
+                )
+            },
+        }
 
     def _check_X_y(self, X, y) -> tuple[np.ndarray, np.ndarray]:
         X, y = check_X_y(
             X,
             y,
-            accept_sparse=["csr", "csc"],
+            accept_sparse=False,
             ensure_2d=True,
             allow_nd=True,
             dtype=None,

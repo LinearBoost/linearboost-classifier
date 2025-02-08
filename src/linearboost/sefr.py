@@ -72,10 +72,21 @@ class SEFR(LinearClassifierMixin, BaseEstimator):
             tags = super().__sklearn_tags__()
             tags.target_tags.required = True
             tags.classifier_tags.multi_class = False
+            tags.classifier_tags.poor_score = True
             return tags
 
     def _more_tags(self) -> dict[str, bool]:
-        return {"binary_only": True, "requires_y": True, "poor_score": True}
+        return {
+            "binary_only": True,
+            "requires_y": True,
+            "poor_score": True,
+            "_xfail_checks": {
+                "check_sample_weight_equivalence_on_dense_data": (
+                    "In SEFR, setting a sample's weight to 0 can produce a different result than omitting the sample. "
+                    "Such samples intentionally still affect the calculation of the intercept."
+                )
+            },
+        }
 
     def _check_X(self, X) -> np.ndarray:
         X = validate_data(
@@ -141,19 +152,25 @@ class SEFR(LinearClassifierMixin, BaseEstimator):
 
         X, y = self._check_X_y(X, y)
         self.classes_, y_ = np.unique(y, return_inverse=True)
-        sample_weight = _check_sample_weight(sample_weight, X, dtype=np.float32)
 
         pos_labels = y_ == 1
         neg_labels = y_ == 0
 
-        pos_sample_weight = (
-            sample_weight[pos_labels] if len(sample_weight[pos_labels]) > 0 else None
-        )
-        neg_sample_weight = (
-            sample_weight[neg_labels] if len(sample_weight[neg_labels]) > 0 else None
-        )
-        if np.all(pos_sample_weight == 0) or np.all(neg_sample_weight == 0):
-            raise ValueError("SEFR requires 2 classes; got only 1 class.")
+        pos_sample_weight, neg_sample_weight = None, None
+        if sample_weight is not None:
+            sample_weight = _check_sample_weight(sample_weight, X, dtype=np.float32)
+            pos_sample_weight = (
+                sample_weight[pos_labels]
+                if len(sample_weight[pos_labels]) > 0
+                else None
+            )
+            neg_sample_weight = (
+                sample_weight[neg_labels]
+                if len(sample_weight[neg_labels]) > 0
+                else None
+            )
+            if np.all(pos_sample_weight == 0) or np.all(neg_sample_weight == 0):
+                raise ValueError("SEFR requires 2 classes; got only 1 class.")
 
         avg_pos = np.average(X[pos_labels, :], axis=0, weights=pos_sample_weight)
         avg_neg = np.average(X[neg_labels, :], axis=0, weights=neg_sample_weight)
