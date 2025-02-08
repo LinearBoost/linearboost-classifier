@@ -1,0 +1,69 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "linearboost"
+dynamic = ["version"]
+authors = [
+    { name = "Hamidreza Keshavarz", email = "hamid9@outlook.com" },
+    { name = "Reza Rawassizadeh", email = "rezar@bu.edu"},
+]
+description = "LinearBoost Classifier is a rapid and accurate classification algorithm that builds upon a very fast, linear classifier."
+readme = "README.md"
+readme-content-type = "text/markdown"
+keywords = [
+    "classification", "classifier", "linear", "adaboost", "boosting", "boost"
+]
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+requires-python = ">=3.8,<3.14"
+dependencies = [
+    "numpy>=1.24.3",
+    "scikit-learn>=1.2.2",
+]
+
+[dependency-groups]
+dev = [
+    "isort",
+    "pytest>=7.0.0",
+    "ruff>=0.9.2",
+]
+
+[project.urls]
+Homepage = "https://github.com/LinearBoost/linearboost-classifier"
+Source = "https://github.com/LinearBoost/linearboost-classifier"
+
+[tool.hatch.version]
+path = "src/linearboost/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/linearboost"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["ignore"]
+
+[tool.black]
+line-length = 120
+
+[tool.isort]
+atomic = true
+profile = "black"
+skip_gitignore = true
+known_first_party = ["black", "blib2to3", "blackd", "_black_version"]
