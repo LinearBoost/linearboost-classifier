@@ -69,11 +69,6 @@ class LinearBoostClassifier(AdaBoostClassifier):
         The SAMME.R algorithm typically converges faster than SAMME,
         achieving a lower test error with fewer boosting iterations.
 
-    random_state : int, RandomState instance or None, default=None
-        Controls the random seed given at each SEFR classifier at each
-        boosting iteration.
-        Pass an int for reproducible output across multiple function calls.
-
     scaler : str, default='minmax'
         Specifies the scaler to apply to the data. Options include:
         
@@ -181,7 +176,6 @@ class LinearBoostClassifier(AdaBoostClassifier):
             None,
         ],
         "loss_function": [None, callable],
-        "random_state": ["random_state"],
     }
 
     def __init__(
@@ -190,7 +184,6 @@ class LinearBoostClassifier(AdaBoostClassifier):
         *,
         learning_rate=1.0,
         algorithm="SAMME",
-        random_state=None,
         scaler="minmax",
         class_weight=None,
         loss_function=None,
@@ -200,7 +193,6 @@ class LinearBoostClassifier(AdaBoostClassifier):
             n_estimators=n_estimators,
             learning_rate=learning_rate,
             algorithm=algorithm,
-            random_state=random_state,
         )
 
         self.scaler = scaler
