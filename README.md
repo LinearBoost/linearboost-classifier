@@ -16,6 +16,21 @@ Key Features:
 - Exceptional Speed: Blazing fast training and inference times
 - Resource Efficient: Low memory usage, ideal for large datasets
 
+## 🚀 New Major Release (v0.1.0)
+Version 0.1.0 of **LinearBoost Classifier** is released, with a pull request from @msamsami! Here are the changes:
+
+- The codebase is refactored into a new structure.
+- Both SEFR and LinearBoostClassifier classes are refactored to fully adhere to Scikit-learn's conventions and API. Now, they are standard Scikit-learn estimators that can be used in Scikit-learn pipelines, grid search, etc.
+- Added unit tests (using pytest) to ensure the estimators adhere to Scikit-learn conventions.
+- Added fit_intercept parameter to SEFR similar to other linear estimators in Scikit-learn (e.g., LogisticRegression, LinearRegression, etc.).
+- Removed random_state parameter from LinearBoostClassifier as it doesn't affect the result, since SEFR doesn't expose a random_state argument. According to Scikit-learn documentation for this parameter in AdaBoostClassifier:         it is only used when estimator exposes a random_state.
+- Added docstring to both SEFR and LinearBoostClassifier classes.
+- Used uv for project and package management.
+- Used ruff and isort for formatting and lining.
+- Added a GitHub workflow (.github/workflows/ci.yml) for CI on PRs.
+
+
+
 ## 🚀 New Release (v0.0.5) 
 
 
