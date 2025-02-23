@@ -1,4 +1,4 @@
-__version__ = "0.0.5"
+__version__ = "0.1.0"
 
 from .linear_boost import LinearBoostClassifier
 from .sefr import SEFR
