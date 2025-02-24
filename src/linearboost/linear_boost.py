@@ -16,7 +16,7 @@ from sklearn.preprocessing import (
     StandardScaler,
 )
 from sklearn.utils import compute_sample_weight
-from sklearn.utils._param_validation import Interval, StrOptions
+from sklearn.utils._param_validation import Interval, StrOptions, Hidden
 from sklearn.utils.multiclass import check_classification_targets, type_of_target
 from sklearn.utils.validation import check_is_fitted
 
@@ -68,6 +68,10 @@ class LinearBoostClassifier(AdaBoostClassifier):
         If 'SAMME.R' then use the SAMME.R real boosting algorithm.
         The SAMME.R algorithm typically converges faster than SAMME,
         achieving a lower test error with fewer boosting iterations.
+
+        .. deprecated:: sklearn 1.6
+            `algorithm` is deprecated and will be removed in sklearn 1.8. This
+            estimator only implements the 'SAMME' algorithm.
 
     scaler : str, default='minmax'
         Specifies the scaler to apply to the data. Options include:
@@ -156,7 +160,7 @@ class LinearBoostClassifier(AdaBoostClassifier):
         Names of features seen during :term:`fit`. Defined only when `X`
         has feature names that are all strings.
 
-    scaler_ : TransformerMixin
+    scaler_ : transformer
         The scaler instance used to transform the data.
 
     Notes
@@ -167,7 +171,7 @@ class LinearBoostClassifier(AdaBoostClassifier):
     _parameter_constraints: dict = {
         "n_estimators": [Interval(Integral, 1, None, closed="left")],
         "learning_rate": [Interval(Real, 0, None, closed="neither")],
-        "algorithm": [StrOptions({"SAMME", "SAMME.R"})],
+        "algorithm": [StrOptions({"SAMME", "SAMME.R"}), Hidden(StrOptions({"deprecated"}))],
         "scaler": [StrOptions({s for s in _scalers})],
         "class_weight": [
             StrOptions({"balanced_subsample", "balanced"}),
@@ -192,7 +196,7 @@ class LinearBoostClassifier(AdaBoostClassifier):
             estimator=SEFR(),
             n_estimators=n_estimators,
             learning_rate=learning_rate,
-            algorithm=algorithm,
+            algorithm="deprecated" if SKLEARN_V1_6_OR_LATER else algorithm,
         )
 
         self.scaler = scaler
@@ -251,7 +255,7 @@ class LinearBoostClassifier(AdaBoostClassifier):
         self.n_classes_ = self.classes_.shape[0]
 
         if self.scaler not in _scalers:
-            raise ValueError(f"Invalid scaler; got {self.scaler}")
+            raise ValueError('Invalid scaler provided; got "%s".' % self.scaler)
 
         if self.scaler == "minmax":
             self.scaler_ = clone(_scalers["minmax"])
