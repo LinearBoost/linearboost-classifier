@@ -75,7 +75,7 @@ class LinearBoostClassifier(AdaBoostClassifier):
 
     scaler : str, default='minmax'
         Specifies the scaler to apply to the data. Options include:
-        
+
         - 'minmax': Applies MinMaxScaler.
         - 'quantile-uniform': Uses QuantileTransformer with `output_distribution='uniform'`.
         - 'quantile-normal': Uses QuantileTransformer with `output_distribution='normal'`.
@@ -112,7 +112,6 @@ class LinearBoostClassifier(AdaBoostClassifier):
         - y_true: Ground truth (correct) target values.
         - y_pred: Estimated target values.
         - sample_weight: Sample weights.
-
 
     Attributes
     ----------
@@ -166,6 +165,20 @@ class LinearBoostClassifier(AdaBoostClassifier):
     Notes
     -----
     The classifier only supports binary classification tasks.
+
+    Examples
+    --------
+    >>> from linearboost import LinearBoostClassifier
+    >>> from sklearn.datasets import load_breast_cancer
+    >>> X, y = load_breast_cancer(return_X_y=True)
+    >>> clf = LinearBoostClassifier().fit(X, y)
+    >>> clf.predict(X[:2, :])
+    array([0, 0])
+    >>> clf.predict_proba(X[:2, :])
+    array([[0.88079708, 0.11920292],
+           [0.88079708, 0.11920292]])
+    >>> clf.score(X, y)
+    0.97...
     """
 
     _parameter_constraints: dict = {
