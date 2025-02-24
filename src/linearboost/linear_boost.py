@@ -16,7 +16,7 @@ from sklearn.preprocessing import (
     StandardScaler,
 )
 from sklearn.utils import compute_sample_weight
-from sklearn.utils._param_validation import Interval, StrOptions, Hidden
+from sklearn.utils._param_validation import Hidden, Interval, StrOptions
 from sklearn.utils.multiclass import check_classification_targets, type_of_target
 from sklearn.utils.validation import check_is_fitted
 
@@ -143,15 +143,7 @@ class LinearBoostClassifier(AdaBoostClassifier):
     estimator_errors_ : ndarray of floats
         Classification error for each estimator in the boosted
         ensemble.
-
-    feature_importances_ : ndarray of shape (n_features,)
-        The impurity-based feature importances if supported by the
-        ``estimator`` (when based on decision trees).
-
-        Warning: impurity-based feature importances can be misleading for
-        high cardinality features (many unique values). See
-        :func:`sklearn.inspection.permutation_importance` as an alternative.
-
+    
     n_features_in_ : int
         Number of features seen during :term:`fit`.
 
@@ -184,7 +176,10 @@ class LinearBoostClassifier(AdaBoostClassifier):
     _parameter_constraints: dict = {
         "n_estimators": [Interval(Integral, 1, None, closed="left")],
         "learning_rate": [Interval(Real, 0, None, closed="neither")],
-        "algorithm": [StrOptions({"SAMME", "SAMME.R"}), Hidden(StrOptions({"deprecated"}))],
+        "algorithm": [
+            StrOptions({"SAMME", "SAMME.R"}),
+            Hidden(StrOptions({"deprecated"})),
+        ],
         "scaler": [StrOptions({s for s in _scalers})],
         "class_weight": [
             StrOptions({"balanced_subsample", "balanced"}),
