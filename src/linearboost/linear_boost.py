@@ -55,13 +55,13 @@ class LinearBoostClassifier(AdaBoostClassifier):
     n_estimators : int, default=200
         The maximum number of SEFR classifiers at which boosting is terminated.
         In case of perfect fit, the learning procedure is stopped early.
-        Values must be in the range `[1, inf)`, preferably in the range `[10, 200]`.
+        Values must be in the range `[1, inf)`, preferably `[10, 200]`.
 
     learning_rate : float, default=1.0
         Weight applied to each SEFR classifier at each boosting iteration. A higher
         learning rate increases the contribution of each SEFR classifier. There is
         a trade-off between the `learning_rate` and `n_estimators` parameters.
-        Values must be in the range `(0.0, inf)`, preferably in the range `(0.0, 1.0)`.
+        Values must be in the range `(0.0, inf)`, preferably `(0.0, 1.0)`.
 
     algorithm : {'SAMME', 'SAMME.R'}, default='SAMME'
         If 'SAMME' then use the SAMME discrete boosting algorithm.
@@ -156,7 +156,7 @@ class LinearBoostClassifier(AdaBoostClassifier):
 
     Notes
     -----
-    The classifier only supports binary classification tasks.
+    This classifier only supports binary classification tasks.
 
     Examples
     --------

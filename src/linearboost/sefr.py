@@ -56,7 +56,7 @@ class SEFR(LinearClassifierMixin, BaseEstimator):
 
     Notes
     -----
-    The classifier only supports binary classification tasks.
+    This classifier only supports binary classification tasks.
 
     Examples
     --------
