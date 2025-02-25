@@ -16,7 +16,7 @@ from sklearn.preprocessing import (
     StandardScaler,
 )
 from sklearn.utils import compute_sample_weight
-from sklearn.utils._param_validation import Interval, StrOptions
+from sklearn.utils._param_validation import Hidden, Interval, StrOptions
 from sklearn.utils.multiclass import check_classification_targets, type_of_target
 from sklearn.utils.validation import check_is_fitted
 
@@ -55,13 +55,13 @@ class LinearBoostClassifier(AdaBoostClassifier):
     n_estimators : int, default=200
         The maximum number of SEFR classifiers at which boosting is terminated.
         In case of perfect fit, the learning procedure is stopped early.
-        Values must be in the range `[1, inf)`, preferably in the range `[10, 200]`.
+        Values must be in the range `[1, inf)`, preferably `[10, 200]`.
 
     learning_rate : float, default=1.0
         Weight applied to each SEFR classifier at each boosting iteration. A higher
         learning rate increases the contribution of each SEFR classifier. There is
         a trade-off between the `learning_rate` and `n_estimators` parameters.
-        Values must be in the range `(0.0, inf)`, preferably in the range `(0.0, 1.0)`.
+        Values must be in the range `(0.0, inf)`, preferably `(0.0, 1.0)`.
 
     algorithm : {'SAMME', 'SAMME.R'}, default='SAMME'
         If 'SAMME' then use the SAMME discrete boosting algorithm.
@@ -69,9 +69,13 @@ class LinearBoostClassifier(AdaBoostClassifier):
         The SAMME.R algorithm typically converges faster than SAMME,
         achieving a lower test error with fewer boosting iterations.
 
+        .. deprecated:: sklearn 1.6
+            `algorithm` is deprecated and will be removed in sklearn 1.8. This
+            estimator only implements the 'SAMME' algorithm.
+
     scaler : str, default='minmax'
         Specifies the scaler to apply to the data. Options include:
-        
+
         - 'minmax': Applies MinMaxScaler.
         - 'quantile-uniform': Uses QuantileTransformer with `output_distribution='uniform'`.
         - 'quantile-normal': Uses QuantileTransformer with `output_distribution='normal'`.
@@ -109,7 +113,6 @@ class LinearBoostClassifier(AdaBoostClassifier):
         - y_pred: Estimated target values.
         - sample_weight: Sample weights.
 
-
     Attributes
     ----------
     estimator_ : estimator
@@ -140,15 +143,7 @@ class LinearBoostClassifier(AdaBoostClassifier):
     estimator_errors_ : ndarray of floats
         Classification error for each estimator in the boosted
         ensemble.
-
-    feature_importances_ : ndarray of shape (n_features,)
-        The impurity-based feature importances if supported by the
-        ``estimator`` (when based on decision trees).
-
-        Warning: impurity-based feature importances can be misleading for
-        high cardinality features (many unique values). See
-        :func:`sklearn.inspection.permutation_importance` as an alternative.
-
+    
     n_features_in_ : int
         Number of features seen during :term:`fit`.
 
@@ -156,18 +151,35 @@ class LinearBoostClassifier(AdaBoostClassifier):
         Names of features seen during :term:`fit`. Defined only when `X`
         has feature names that are all strings.
 
-    scaler_ : TransformerMixin
+    scaler_ : transformer
         The scaler instance used to transform the data.
 
     Notes
     -----
-    The classifier only supports binary classification tasks.
+    This classifier only supports binary classification tasks.
+
+    Examples
+    --------
+    >>> from linearboost import LinearBoostClassifier
+    >>> from sklearn.datasets import load_breast_cancer
+    >>> X, y = load_breast_cancer(return_X_y=True)
+    >>> clf = LinearBoostClassifier().fit(X, y)
+    >>> clf.predict(X[:2, :])
+    array([0, 0])
+    >>> clf.predict_proba(X[:2, :])
+    array([[0.88079708, 0.11920292],
+           [0.88079708, 0.11920292]])
+    >>> clf.score(X, y)
+    0.97...
     """
 
     _parameter_constraints: dict = {
         "n_estimators": [Interval(Integral, 1, None, closed="left")],
         "learning_rate": [Interval(Real, 0, None, closed="neither")],
-        "algorithm": [StrOptions({"SAMME", "SAMME.R"})],
+        "algorithm": [
+            StrOptions({"SAMME", "SAMME.R"}),
+            Hidden(StrOptions({"deprecated"})),
+        ],
         "scaler": [StrOptions({s for s in _scalers})],
         "class_weight": [
             StrOptions({"balanced_subsample", "balanced"}),
@@ -251,7 +263,7 @@ class LinearBoostClassifier(AdaBoostClassifier):
         self.n_classes_ = self.classes_.shape[0]
 
         if self.scaler not in _scalers:
-            raise ValueError(f"Invalid scaler; got {self.scaler}")
+            raise ValueError('Invalid scaler provided; got "%s".' % self.scaler)
 
         if self.scaler == "minmax":
             self.scaler_ = clone(_scalers["minmax"])
