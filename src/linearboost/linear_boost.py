@@ -204,7 +204,7 @@ class LinearBoostClassifier(AdaBoostClassifier):
             estimator=SEFR(),
             n_estimators=n_estimators,
             learning_rate=learning_rate,
-            algorithm="deprecated" if SKLEARN_V1_6_OR_LATER else algorithm,
+            algorithm=algorithm,
         )
 
         self.scaler = scaler
