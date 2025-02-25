@@ -1,6 +1,6 @@
 # LinearBoost Classifier
 
-![Lastest Release](https://img.shields.io/badge/release-v0.1.0-green)
+![Lastest Release](https://img.shields.io/badge/release-v0.1.1-green)
 [![PyPI Version](https://img.shields.io/pypi/v/linearboost)](https://pypi.org/project/linearboost/)
 ![Python Versions](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)
 =======================
@@ -64,7 +64,7 @@ The following parameters yielded optimal results during testing. All results are
   - `SAMME`: May be better for datasets with clearer separations between classes.
   - `SAMME.R`: Can handle more nuanced class probabilities.
 
-  **Note:** As of scikit-learn v1.6, the `algorithm` parameter is deprecated and will be removed in v1.8. LinearBoost will only implement the 'SAMME' algorithm in newer versions.
+  **Note:** As of scikit-learn v1.6, the `algorithm` parameter is deprecated and will be removed in v1.8. LinearBoostClassifier will only implement the 'SAMME' algorithm in newer versions.
 
 - **`scaler`**:  
   The following scaling methods are recommended based on dataset characteristics:
