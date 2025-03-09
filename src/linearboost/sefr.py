@@ -56,10 +56,24 @@ class SEFR(LinearClassifierMixin, BaseEstimator):
 
     Notes
     -----
-    The classifier only supports binary classification tasks.
+    This classifier only supports binary classification tasks.
+
+    Examples
+    --------
+    >>> from linearboost import SEFR
+    >>> from sklearn.datasets import load_breast_cancer
+    >>> X, y = load_breast_cancer(return_X_y=True)
+    >>> clf = SEFR().fit(X, y)
+    >>> clf.predict(X[:2, :])
+    array([0, 0])
+    >>> clf.predict_proba(X[:2, :])
+    array([[1.00...e+000, 2.04...e-154],
+           [1.00...e+000, 1.63...e-165]])
+    >>> clf.score(X, y)
+    0.86...
     """
 
-    _parameter_constraints = {
+    _parameter_constraints: dict = {
         "fit_intercept": ["boolean"],
     }
 

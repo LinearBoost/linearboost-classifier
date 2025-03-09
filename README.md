@@ -1,6 +1,9 @@
+# LinearBoost Classifier
 
-LinearBoost Classifier
-=======================
+![Lastest Release](https://img.shields.io/badge/release-v0.1.1-green)
+[![PyPI Version](https://img.shields.io/pypi/v/linearboost)](https://pypi.org/project/linearboost/)
+![Python Versions](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)
+
 
 LinearBoost is a fast and accurate classification algorithm built to enhance the performance of the linear classifier SEFR. It combines efficiency and accuracy, delivering state-of-the-art F1 scores and classification performance.
 
@@ -23,17 +26,15 @@ Version 0.1.0 of **LinearBoost Classifier** is released, with a pull request fro
 - Both SEFR and LinearBoostClassifier classes are refactored to fully adhere to Scikit-learn's conventions and API. Now, they are standard Scikit-learn estimators that can be used in Scikit-learn pipelines, grid search, etc.
 - Added unit tests (using pytest) to ensure the estimators adhere to Scikit-learn conventions.
 - Added fit_intercept parameter to SEFR similar to other linear estimators in Scikit-learn (e.g., LogisticRegression, LinearRegression, etc.).
-- Removed random_state parameter from LinearBoostClassifier as it doesn't affect the result, since SEFR doesn't expose a random_state argument. According to Scikit-learn documentation for this parameter in AdaBoostClassifier:         it is only used when estimator exposes a random_state.
+- Removed random_state parameter from LinearBoostClassifier as it doesn't affect the result, since SEFR doesn't expose a random_state argument. According to Scikit-learn documentation for this parameter in AdaBoostClassifier: 
+  > it is only used when estimator exposes a random_state.
 - Added docstring to both SEFR and LinearBoostClassifier classes.
 - Used uv for project and package management.
 - Used ruff and isort for formatting and lining.
-- Added a GitHub workflow (.github/workflows/ci.yml) for CI on PRs.
-
+- Added a GitHub workflow (*.github/workflows/ci.yml*) for CI on PRs.
 
 
 ## 🚀 New Release (v0.0.5) 
-
-
 Version 0.0.5 of the **LinearBoost Classifier** is released! This new version introduces several exciting features and improvements:
 
 - 🛠️ Support of custom loss function
@@ -62,6 +63,8 @@ The following parameters yielded optimal results during testing. All results are
   Use either `SAMME` or `SAMME.R`. The choice depends on the specific problem:
   - `SAMME`: May be better for datasets with clearer separations between classes.
   - `SAMME.R`: Can handle more nuanced class probabilities.
+
+  **Note:** As of scikit-learn v1.6, the `algorithm` parameter is deprecated and will be removed in v1.8. LinearBoostClassifier will only implement the 'SAMME' algorithm in newer versions.
 
 - **`scaler`**:  
   The following scaling methods are recommended based on dataset characteristics:
@@ -148,11 +151,10 @@ params = {
     'enable_categorical': True,
     'eval_metric': 'logloss'
 }
-````
+```
 
 #### CatBoost
 ```python
-
 params = {
     'iterations': trial.suggest_int('iterations', 50, 500),
     'depth': trial.suggest_int('depth', 1, 16),
@@ -168,11 +170,10 @@ params = {
     'eval_metric': 'F1',
     'cat_features': categorical_cols
 }
-````
+```
 
 #### LightGBM
 ```python
-
 params = {
     'objective': 'binary',
     'metric': 'binary_logloss',
@@ -191,19 +192,17 @@ params = {
     'cat_l2': trial.suggest_loguniform('cat_l2', 1e-8, 10.0),
     'verbosity': -1
 }
-````
+```
 
 #### LinearBoost
 ```python
-
 params = {
     'n_estimators': trial.suggest_int('n_estimators', 10, 200),
     'learning_rate': trial.suggest_loguniform('learning_rate', 0.01, 1),
     'algorithm': trial.suggest_categorical('algorithm', ['SAMME', 'SAMME.R']),
     'scaler': trial.suggest_categorical('scaler', ['minmax', 'robust', 'quantile-uniform', 'quantile-normal'])
 }
-````
-
+```
 
 ### Why LinearBoost?
 LinearBoost's combination of **runtime efficiency** and **high accuracy** makes it a powerful choice for real-world machine learning tasks, particularly in resource-constrained or real-time applications.
