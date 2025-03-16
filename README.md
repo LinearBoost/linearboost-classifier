@@ -207,6 +207,12 @@ params = {
 ### Why LinearBoost?
 LinearBoost's combination of **runtime efficiency** and **high accuracy** makes it a powerful choice for real-world machine learning tasks, particularly in resource-constrained or real-time applications.
 
+### 📰 Featured in:
+- [LightGBM Alternatives: A Comprehensive Comparison](https://nightwatcherai.com/blog/lightgbm-alternatives)  
+  _by Jordan Cole, March 11, 2025_  
+  *Discusses how LinearBoost outperforms traditional boosting frameworks in terms of speed while maintaining accuracy.*
+  
+
 Future Developments
 -----------------------------
 These are not supported in this current version, but are in the future plans:
