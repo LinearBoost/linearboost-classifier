@@ -32,6 +32,7 @@ classifiers = [
 requires-python = ">=3.8,<3.14"
 dependencies = [
     "scikit-learn>=1.2.2",
+    "typing-extensions>=4.1.0; python_full_version < '3.11'"
 ]
 
 [dependency-groups]
