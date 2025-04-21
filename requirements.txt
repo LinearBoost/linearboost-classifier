@@ -1,1 +1,2 @@
 scikit-learn>=1.2.2
+typing-extensions>=4.1.0; python_version < "3.11"

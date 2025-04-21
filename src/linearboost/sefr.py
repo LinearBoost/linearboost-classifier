@@ -1,5 +1,12 @@
 from __future__ import annotations
 
+import sys
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
+
 import numpy as np
 from sklearn.base import BaseEstimator
 from sklearn.linear_model._base import LinearClassifierMixin
@@ -139,7 +146,7 @@ class SEFR(LinearClassifierMixin, BaseEstimator):
         return X, y
 
     @_fit_context(prefer_skip_nested_validation=True)
-    def fit(self, X, y, sample_weight=None) -> "SEFR":
+    def fit(self, X, y, sample_weight=None) -> Self:
         """
         Fit the model according to the given training data.
 

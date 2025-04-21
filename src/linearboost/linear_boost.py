@@ -1,6 +1,13 @@
 from __future__ import annotations
 
+import sys
+import warnings
 from numbers import Integral, Real
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 import numpy as np
 from sklearn.base import clone
@@ -65,13 +72,18 @@ class LinearBoostClassifier(AdaBoostClassifier):
 
     algorithm : {'SAMME', 'SAMME.R'}, default='SAMME'
         If 'SAMME' then use the SAMME discrete boosting algorithm.
-        If 'SAMME.R' then use the SAMME.R real boosting algorithm.
+        If 'SAMME.R' then use the SAMME.R real boosting algorithm
+        (only available in scikit-learn < 1.6).
         The SAMME.R algorithm typically converges faster than SAMME,
         achieving a lower test error with fewer boosting iterations.
 
-        .. deprecated:: sklearn 1.6
-            `algorithm` is deprecated and will be removed in sklearn 1.8. This
-            estimator only implements the 'SAMME' algorithm.
+        .. deprecated:: scikit-learn 1.4
+            `"SAMME.R"` is deprecated and will be removed in scikit-learn 1.6.
+            '"SAMME"' will become the default.
+
+        .. deprecated:: scikit-learn 1.6
+            `algorithm` is deprecated and will be removed in scikit-learn 1.8.
+            This estimator only implements the 'SAMME' algorithm in scikit-learn >= 1.6.
 
     scaler : str, default='minmax'
         Specifies the scaler to apply to the data. Options include:
@@ -111,21 +123,21 @@ class LinearBoostClassifier(AdaBoostClassifier):
         where:
         - y_true: Ground truth (correct) target values.
         - y_pred: Estimated target values.
-        - sample_weight: Sample weights.
+        - sample_weight: Sample weights (optional).
 
     Attributes
     ----------
     estimator_ : estimator
         The base estimator (SEFR) from which the ensemble is grown.
 
-        .. versionadded:: sklearn 1.2
+        .. versionadded:: scikit-learn 1.2
            `base_estimator_` was renamed to `estimator_`.
 
     base_estimator_ : estimator
         The base estimator from which the ensemble is grown.
 
-        .. deprecated:: sklearn 1.2
-            `base_estimator_` is deprecated and will be removed in sklearn 1.4.
+        .. deprecated:: scikit-learn 1.2
+            `base_estimator_` is deprecated and will be removed in scikit-learn 1.4.
             Use `estimator_` instead.
 
     estimators_ : list of classifiers
@@ -176,10 +188,9 @@ class LinearBoostClassifier(AdaBoostClassifier):
     _parameter_constraints: dict = {
         "n_estimators": [Interval(Integral, 1, None, closed="left")],
         "learning_rate": [Interval(Real, 0, None, closed="neither")],
-        "algorithm": [
-            StrOptions({"SAMME", "SAMME.R"}),
-            Hidden(StrOptions({"deprecated"})),
-        ],
+        "algorithm": [StrOptions({"SAMME"}), Hidden(StrOptions({"deprecated"}))]
+        if SKLEARN_V1_6_OR_LATER
+        else [StrOptions({"SAMME", "SAMME.R"})],
         "scaler": [StrOptions({s for s in _scalers})],
         "class_weight": [
             StrOptions({"balanced_subsample", "balanced"}),
@@ -257,7 +268,7 @@ class LinearBoostClassifier(AdaBoostClassifier):
 
         return X, y
 
-    def fit(self, X, y, sample_weight=None) -> "LinearBoostClassifier":
+    def fit(self, X, y, sample_weight=None) -> Self:
         X, y = self._check_X_y(X, y)
         self.classes_ = np.unique(y)
         self.n_classes_ = self.classes_.shape[0]
@@ -291,7 +302,14 @@ class LinearBoostClassifier(AdaBoostClassifier):
             else:
                 sample_weight = expanded_class_weight
 
-        return super().fit(X_transformed, y, sample_weight)
+        with warnings.catch_warnings():
+            if SKLEARN_V1_6_OR_LATER:
+                warnings.filterwarnings(
+                    "ignore",
+                    category=FutureWarning,
+                    message=".*parameter 'algorithm' is deprecated.*",
+                )
+            return super().fit(X_transformed, y, sample_weight)
 
     def _boost(self, iboost, X, y, sample_weight, random_state):
         estimator = self._make_estimator(random_state=random_state)
