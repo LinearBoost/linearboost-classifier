@@ -20,7 +20,7 @@ Key Features:
 - Resource Efficient: Low memory usage, ideal for large datasets
 
 ## 🚀 New Major Release (v0.1.1)
-Version 0.1.0 of **LinearBoost Classifier** is released, with a pull request from [@msamsami](https://github.com/msamsami). Here are the changes:
+Version 0.1.1 of **LinearBoost Classifier** is released, with a pull request from [@msamsami](https://github.com/msamsami). Here are the changes:
 
 - The codebase is refactored into a new structure.
 - Both SEFR and LinearBoostClassifier classes are refactored to fully adhere to Scikit-learn's conventions and API. Now, they are standard Scikit-learn estimators that can be used in Scikit-learn pipelines, grid search, etc.
