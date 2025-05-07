@@ -32,7 +32,7 @@ Version 0.1.1 of **LinearBoost Classifier** is released, with a pull request fro
 - Used uv for project and package management.
 - Used ruff and isort for formatting and lining.
 - Added a GitHub workflow (*.github/workflows/ci.yml*) for CI on PRs.
-- Improve Scikit-learn compatibility.
+- Improved Scikit-learn compatibility.
 
 
 ## 🚀 New Release (v0.0.5) 
