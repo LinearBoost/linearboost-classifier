@@ -19,7 +19,7 @@ Key Features:
 - Exceptional Speed: Blazing fast training and inference times
 - Resource Efficient: Low memory usage, ideal for large datasets
 
-## 🚀 New Major Release (v0.1.0)
+## 🚀 New Major Release (v0.1.1)
 Version 0.1.0 of **LinearBoost Classifier** is released, with a pull request from [@msamsami](https://github.com/msamsami). Here are the changes:
 
 - The codebase is refactored into a new structure.
@@ -32,6 +32,7 @@ Version 0.1.0 of **LinearBoost Classifier** is released, with a pull request fro
 - Used uv for project and package management.
 - Used ruff and isort for formatting and lining.
 - Added a GitHub workflow (*.github/workflows/ci.yml*) for CI on PRs.
+- Improve Scikit-learn compatibility.
 
 
 ## 🚀 New Release (v0.0.5) 
