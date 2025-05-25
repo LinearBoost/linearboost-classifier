@@ -2,7 +2,7 @@ from sklearn.base import is_classifier
 
 from linearboost.linear_boost import LinearBoostClassifier
 
-from ._utils import check_estimator, get_expected_failed_tests, _yield_all_checks
+from ._utils import check_estimator, get_expected_failed_tests
 
 
 def test_linear_boost_estimator():
