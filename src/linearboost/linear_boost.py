@@ -214,9 +214,7 @@ class LinearBoostClassifier(AdaBoostClassifier):
         class_weight=None,
         loss_function=None,
     ):
-        if algorithm not in {"SAMME", "SAMME.R"}:
-            raise ValueError("algorithm must be 'SAMME' or 'SAMME.R'")
-
+        
         super().__init__(
             estimator=SEFR(), n_estimators=n_estimators, learning_rate=learning_rate
         )
@@ -272,6 +270,9 @@ class LinearBoostClassifier(AdaBoostClassifier):
         return X, y
 
     def fit(self, X, y, sample_weight=None) -> Self:
+        if self.algorithm not in {"SAMME", "SAMME.R"}:
+            raise ValueError("algorithm must be 'SAMME' or 'SAMME.R'")
+
         X, y = self._check_X_y(X, y)
         self.classes_ = np.unique(y)
         self.n_classes_ = self.classes_.shape[0]
