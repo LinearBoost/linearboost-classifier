@@ -214,7 +214,6 @@ class LinearBoostClassifier(AdaBoostClassifier):
         class_weight=None,
         loss_function=None,
     ):
-        
         super().__init__(
             estimator=SEFR(), n_estimators=n_estimators, learning_rate=learning_rate
         )
