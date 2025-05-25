@@ -276,7 +276,9 @@ class LinearBoostClassifier(AdaBoostClassifier):
         if sample_weight is not None:
             sample_weight = np.asarray(sample_weight)
             if sample_weight.shape[0] != X.shape[0]:
-                raise ValueError(f"sample_weight.shape == {sample_weight.shape} is incompatible with X.shape == {X.shape}")
+                raise ValueError(
+                    f"sample_weight.shape == {sample_weight.shape} is incompatible with X.shape == {X.shape}"
+                )
             nonzero_mask = sample_weight != 0
             X = X[nonzero_mask]
             y = y[nonzero_mask]
