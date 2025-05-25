@@ -35,7 +35,7 @@ from sklearn.preprocessing import (
     RobustScaler,
     StandardScaler,
 )
-from sklearn.utils import compute_sample_weight
+from sklearn.utils import compute_sample_weight, check_array
 from sklearn.utils._param_validation import Interval, StrOptions
 from sklearn.utils.multiclass import check_classification_targets, type_of_target
 from sklearn.utils.validation import check_is_fitted
@@ -271,12 +271,14 @@ class LinearBoostClassifier(AdaBoostClassifier):
     def fit(self, X, y, sample_weight=None) -> Self:
         if self.algorithm not in {"SAMME", "SAMME.R"}:
             raise ValueError("algorithm must be 'SAMME' or 'SAMME.R'")
+        X = check_array(X, accept_sparse=True)
+        y = np.asarray(y)
         if sample_weight is not None:
+            sample_weight = np.asarray(sample_weight)
             nonzero_mask = sample_weight != 0
             X = X[nonzero_mask]
             y = y[nonzero_mask]
             sample_weight = sample_weight[nonzero_mask]
-
         X, y = self._check_X_y(X, y)
         self.classes_ = np.unique(y)
         self.n_classes_ = self.classes_.shape[0]
