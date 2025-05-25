@@ -224,7 +224,8 @@ This project is licensed under the terms of the MIT license. See [LICENSE](https
 
 Some portions of this code are adapted from the scikit-learn project
 (https://scikit-learn.org), which is licensed under the BSD 3-Clause License.
-See the `licenses/` folder for details. The modifications and additions made to the original code are licensed under the MIT License © 2025 Hamidreza Keshavarz, Reza Rawassizadeh.
+See the `licenses/` folder for details. The modifications and additions made to the original code are licensed under the MIT License © 2025 Hamidreza Keshavarz, Reza Rawassizadeh. 
+The original code from scikit-learn is available at [scikit-learn GitHub repository](https://github.com/scikit-learn/scikit-learn)
+
 Special Thanks to:
 - **Mehdi Samsami** – for software engineering, refactoring, and ensuring compatibility.
-The original code from scikit-learn is available at [scikit-learn GitHub repository](https://github.com/scikit-learn/scikit-learn)
