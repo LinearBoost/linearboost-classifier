@@ -16,7 +16,6 @@ from __future__ import annotations
 import sys
 import warnings
 from numbers import Integral, Real
-from scipy.special import xlogy
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -37,7 +36,7 @@ from sklearn.preprocessing import (
     StandardScaler,
 )
 from sklearn.utils import compute_sample_weight
-from sklearn.utils._param_validation import Hidden, Interval, StrOptions
+from sklearn.utils._param_validation import Interval, StrOptions
 from sklearn.utils.multiclass import check_classification_targets, type_of_target
 from sklearn.utils.validation import check_is_fitted
 
