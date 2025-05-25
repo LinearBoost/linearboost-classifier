@@ -271,26 +271,6 @@ class LinearBoostClassifier(AdaBoostClassifier):
     def fit(self, X, y, sample_weight=None) -> Self:
         if self.algorithm not in {"SAMME", "SAMME.R"}:
             raise ValueError("algorithm must be 'SAMME' or 'SAMME.R'")
-        X, y = check_X_y(X, y, accept_sparse=True)
-
-        if sample_weight is not None:
-            sample_weight = np.asarray(sample_weight)
-            if sample_weight.shape[0] != X.shape[0]:
-                raise ValueError(
-                    f"sample_weight.shape == {sample_weight.shape} is incompatible with X.shape == {X.shape}"
-                )
-            # fix here
-            nonzero_mask = (
-                sample_weight.sum(axis=1) != 0
-                if sample_weight.ndim > 1
-                else sample_weight != 0
-            )
-            X = X[nonzero_mask]
-            y = y[nonzero_mask]
-            sample_weight = sample_weight[nonzero_mask]
-        X, y = self._check_X_y(X, y)
-        self.classes_ = np.unique(y)
-        self.n_classes_ = self.classes_.shape[0]
 
         if self.scaler not in _scalers:
             raise ValueError('Invalid scaler provided; got "%s".' % self.scaler)
@@ -302,6 +282,24 @@ class LinearBoostClassifier(AdaBoostClassifier):
                 clone(_scalers[self.scaler]), clone(_scalers["minmax"])
             )
         X_transformed = self.scaler_.fit_transform(X)
+
+        if sample_weight is not None:
+            sample_weight = np.asarray(sample_weight)
+            if sample_weight.shape[0] != X_transformed.shape[0]:
+                raise ValueError(
+                    f"sample_weight.shape == {sample_weight.shape} is incompatible with X.shape == {X_transformed.shape}"
+                )
+            nonzero_mask = (
+                sample_weight.sum(axis=1) != 0
+                if sample_weight.ndim > 1
+                else sample_weight != 0
+            )
+            X_transformed = X_transformed[nonzero_mask]
+            y = y[nonzero_mask]
+            sample_weight = sample_weight[nonzero_mask]
+        X_transformed, y = self._check_X_y(X_transformed, y)
+        self.classes_ = np.unique(y)
+        self.n_classes_ = self.classes_.shape[0]
 
         if self.class_weight is not None:
             valid_presets = ("balanced", "balanced_subsample")
@@ -326,7 +324,7 @@ class LinearBoostClassifier(AdaBoostClassifier):
                 warnings.filterwarnings(
                     "ignore",
                     category=FutureWarning,
-                    message=".*parameter 'algorithm' is deprecated.*",
+                    message=".*parameter 'algorithm' may change in the future.*",
                 )
             return super().fit(X_transformed, y, sample_weight)
 
