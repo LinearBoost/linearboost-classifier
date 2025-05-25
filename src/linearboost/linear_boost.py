@@ -245,7 +245,7 @@ class LinearBoostClassifier(AdaBoostClassifier):
                 "check_sample_weights_invariance": (
                     "In LinearBoostClassifier, a zero sample_weight is not equivalent to removing the sample, "
                     "as samples with zero weight intentionally still affect the data scaling process."
-                )
+                ),
             },
         }
 
