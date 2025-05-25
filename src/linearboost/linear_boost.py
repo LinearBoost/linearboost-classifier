@@ -1,7 +1,7 @@
 # This file is part of the LinearBoost project.
 #
 # Portions of this file are derived from scikit-learn
-# Copyright (c) 2007–2024, scikit-learn developers
+# Copyright (c) 2007–2024, scikit-learn developers (version 1.5)
 # Licensed under the BSD 3-Clause License
 # See https://github.com/scikit-learn/scikit-learn/blob/main/COPYING for details.
 #
