@@ -282,10 +282,10 @@ class LinearBoostClassifier(AdaBoostClassifier):
                 clone(_scalers[self.scaler]), clone(_scalers["minmax"])
             )
         X_transformed = self.scaler_.fit_transform(X)
+        y = np.asarray(y)
 
         if sample_weight is not None:
             sample_weight = np.asarray(sample_weight)
-            y = np.asarray(y)
             if sample_weight.shape[0] != X_transformed.shape[0]:
                 raise ValueError(
                     f"sample_weight.shape == {sample_weight.shape} is incompatible with X.shape == {X_transformed.shape}"
