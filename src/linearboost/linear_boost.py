@@ -279,7 +279,12 @@ class LinearBoostClassifier(AdaBoostClassifier):
                 raise ValueError(
                     f"sample_weight.shape == {sample_weight.shape} is incompatible with X.shape == {X.shape}"
                 )
-            nonzero_mask = sample_weight != 0
+            # fix here
+            nonzero_mask = (
+                sample_weight.sum(axis=1) != 0
+                if sample_weight.ndim > 1
+                else sample_weight != 0
+            )
             X = X[nonzero_mask]
             y = y[nonzero_mask]
             sample_weight = sample_weight[nonzero_mask]
