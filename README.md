@@ -1,6 +1,6 @@
 # LinearBoost Classifier
 
-![Lastest Release](https://img.shields.io/badge/release-v0.1.1-green)
+![Lastest Release](https://img.shields.io/badge/release-v0.1.2-green)
 [![PyPI Version](https://img.shields.io/pypi/v/linearboost)](https://pypi.org/project/linearboost/)
 ![Python Versions](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)
 
@@ -19,10 +19,11 @@ Key Features:
 - Exceptional Speed: Blazing fast training and inference times
 - Resource Efficient: Low memory usage, ideal for large datasets
 
-## 🚀 New Major Release (v0.1.1)
-Version 0.1.1 of **LinearBoost Classifier** is released, with a pull request from [@msamsami](https://github.com/msamsami). Here are the changes:
+## 🚀 New Major Release (v0.1.2)
+Version 0.1.2 of **LinearBoost Classifier** is released. Here are the changes:
 
 - The codebase is refactored into a new structure.
+- SAMME.R algorithm is returned to the classifier.
 - Both SEFR and LinearBoostClassifier classes are refactored to fully adhere to Scikit-learn's conventions and API. Now, they are standard Scikit-learn estimators that can be used in Scikit-learn pipelines, grid search, etc.
 - Added unit tests (using pytest) to ensure the estimators adhere to Scikit-learn conventions.
 - Added fit_intercept parameter to SEFR similar to other linear estimators in Scikit-learn (e.g., LogisticRegression, LinearRegression, etc.).
@@ -33,16 +34,6 @@ Version 0.1.1 of **LinearBoost Classifier** is released, with a pull request fro
 - Used ruff and isort for formatting and lining.
 - Added a GitHub workflow (*.github/workflows/ci.yml*) for CI on PRs.
 - Improved Scikit-learn compatibility.
-
-
-## 🚀 New Release (v0.0.5) 
-Version 0.0.5 of the **LinearBoost Classifier** is released! This new version introduces several exciting features and improvements:
-
-- 🛠️ Support of custom loss function
-- ✅ Enhanced handling of class weights
-- 🎨 Customized handling of the data scalers
-- ⚡ Optimized boosting
-- 🕒 Improved runtime and scalability
 
 
 Get Started and Documentation
@@ -228,3 +219,12 @@ License
 -------
 
 This project is licensed under the terms of the MIT license. See [LICENSE](https://github.com/LinearBoost/linearboost-classifier/blob/main/LICENSE) for additional details.
+
+## Acknowledgments
+
+Some portions of this code are adapted from the scikit-learn project
+(https://scikit-learn.org), which is licensed under the BSD 3-Clause License.
+See the `licenses/` folder for details. The modifications and additions made to the original code are licensed under the MIT License © 2025 Hamidreza Keshavarz, Reza Rawassizadeh.
+Special Thanks to:
+- **Mehdi Samsami** – for software engineering, refactoring, and ensuring compatibility.
+The original code from scikit-learn is available at [scikit-learn GitHub repository](https://github.com/scikit-learn/scikit-learn)

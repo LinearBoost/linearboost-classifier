@@ -130,3 +130,9 @@ dmypy.json
 
 #PyCharm
 .idea/
+catboost_info/catboost_training.json
+catboost_info/learn/events.out.tfevents
+catboost_info/learn_error.tsv
+src/linearboost/Untitled-1.ipynb
+catboost_info/time_left.tsv
+*.ipynb
