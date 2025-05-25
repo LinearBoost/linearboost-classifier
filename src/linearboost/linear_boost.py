@@ -271,6 +271,11 @@ class LinearBoostClassifier(AdaBoostClassifier):
     def fit(self, X, y, sample_weight=None) -> Self:
         if self.algorithm not in {"SAMME", "SAMME.R"}:
             raise ValueError("algorithm must be 'SAMME' or 'SAMME.R'")
+        if sample_weight is not None:
+            nonzero_mask = sample_weight != 0
+            X = X[nonzero_mask]
+            y = y[nonzero_mask]
+            sample_weight = sample_weight[nonzero_mask]
 
         X, y = self._check_X_y(X, y)
         self.classes_ = np.unique(y)
