@@ -241,6 +241,10 @@ class LinearBoostClassifier(AdaBoostClassifier):
                 "check_sample_weight_equivalence_on_dense_data": (
                     "In LinearBoostClassifier, setting a sample's weight to 0 can produce a different "
                     "result than omitting the sample. Such samples intentionally still affect the data scaling process."
+                ),
+                "check_sample_weights_invariance": (
+                    "In LinearBoostClassifier, a zero sample_weight is not equivalent to removing the sample, "
+                    "as samples with zero weight intentionally still affect the data scaling process."
                 )
             },
         }
