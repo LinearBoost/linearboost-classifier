@@ -271,10 +271,12 @@ class LinearBoostClassifier(AdaBoostClassifier):
     def fit(self, X, y, sample_weight=None) -> Self:
         if self.algorithm not in {"SAMME", "SAMME.R"}:
             raise ValueError("algorithm must be 'SAMME' or 'SAMME.R'")
-        X = check_array(X, accept_sparse=True)
-        y = np.asarray(y)
+        X, y = check_X_y(X, y, accept_sparse=True)
+
         if sample_weight is not None:
             sample_weight = np.asarray(sample_weight)
+            if sample_weight.shape[0] != X.shape[0]:
+                raise ValueError(f"sample_weight.shape == {sample_weight.shape} is incompatible with X.shape == {X.shape}")
             nonzero_mask = sample_weight != 0
             X = X[nonzero_mask]
             y = y[nonzero_mask]
