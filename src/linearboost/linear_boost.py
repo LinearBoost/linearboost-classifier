@@ -1,3 +1,16 @@
+# This file is part of the LinearBoost project.
+#
+# Portions of this file are derived from scikit-learn
+# Copyright (c) 2007–2024, scikit-learn developers (version 1.5)
+# Licensed under the BSD 3-Clause License
+# See https://github.com/scikit-learn/scikit-learn/blob/main/COPYING for details.
+#
+# Additional code and modifications:
+#   - Hamidreza Keshavarz (hamid9@outlook.com) — machine learning logic, design, and new algorithms
+#   - Mehdi Samsami (mehdisamsami@live.com) — software refactoring, compatibility with scikit-learn framework, and packaging
+#
+# The combined work is licensed under the MIT License.
+
 from __future__ import annotations
 
 import sys
@@ -23,7 +36,7 @@ from sklearn.preprocessing import (
     StandardScaler,
 )
 from sklearn.utils import compute_sample_weight
-from sklearn.utils._param_validation import Hidden, Interval, StrOptions
+from sklearn.utils._param_validation import Interval, StrOptions
 from sklearn.utils.multiclass import check_classification_targets, type_of_target
 from sklearn.utils.validation import check_is_fitted
 
@@ -73,17 +86,9 @@ class LinearBoostClassifier(AdaBoostClassifier):
     algorithm : {'SAMME', 'SAMME.R'}, default='SAMME'
         If 'SAMME' then use the SAMME discrete boosting algorithm.
         If 'SAMME.R' then use the SAMME.R real boosting algorithm
-        (only available in scikit-learn < 1.6).
+        (implemented from scikit-learn = 1.5).
         The SAMME.R algorithm typically converges faster than SAMME,
         achieving a lower test error with fewer boosting iterations.
-
-        .. deprecated:: scikit-learn 1.4
-            `"SAMME.R"` is deprecated and will be removed in scikit-learn 1.6.
-            '"SAMME"' will become the default.
-
-        .. deprecated:: scikit-learn 1.6
-            `algorithm` is deprecated and will be removed in scikit-learn 1.8.
-            This estimator only implements the 'SAMME' algorithm in scikit-learn >= 1.6.
 
     scaler : str, default='minmax'
         Specifies the scaler to apply to the data. Options include:
@@ -188,9 +193,7 @@ class LinearBoostClassifier(AdaBoostClassifier):
     _parameter_constraints: dict = {
         "n_estimators": [Interval(Integral, 1, None, closed="left")],
         "learning_rate": [Interval(Real, 0, None, closed="neither")],
-        "algorithm": [StrOptions({"SAMME"}), Hidden(StrOptions({"deprecated"}))]
-        if SKLEARN_V1_6_OR_LATER
-        else [StrOptions({"SAMME", "SAMME.R"})],
+        "algorithm": [StrOptions({"SAMME", "SAMME.R"})],
         "scaler": [StrOptions({s for s in _scalers})],
         "class_weight": [
             StrOptions({"balanced_subsample", "balanced"}),
@@ -206,18 +209,15 @@ class LinearBoostClassifier(AdaBoostClassifier):
         n_estimators=200,
         *,
         learning_rate=1.0,
-        algorithm="SAMME",
+        algorithm="SAMME.R",
         scaler="minmax",
         class_weight=None,
         loss_function=None,
     ):
         super().__init__(
-            estimator=SEFR(),
-            n_estimators=n_estimators,
-            learning_rate=learning_rate,
-            algorithm=algorithm,
+            estimator=SEFR(), n_estimators=n_estimators, learning_rate=learning_rate
         )
-
+        self.algorithm = algorithm
         self.scaler = scaler
         self.class_weight = class_weight
         self.loss_function = loss_function
@@ -241,7 +241,11 @@ class LinearBoostClassifier(AdaBoostClassifier):
                 "check_sample_weight_equivalence_on_dense_data": (
                     "In LinearBoostClassifier, setting a sample's weight to 0 can produce a different "
                     "result than omitting the sample. Such samples intentionally still affect the data scaling process."
-                )
+                ),
+                "check_sample_weights_invariance": (
+                    "In LinearBoostClassifier, a zero sample_weight is not equivalent to removing the sample, "
+                    "as samples with zero weight intentionally still affect the data scaling process."
+                ),
             },
         }
 
@@ -269,9 +273,8 @@ class LinearBoostClassifier(AdaBoostClassifier):
         return X, y
 
     def fit(self, X, y, sample_weight=None) -> Self:
-        X, y = self._check_X_y(X, y)
-        self.classes_ = np.unique(y)
-        self.n_classes_ = self.classes_.shape[0]
+        if self.algorithm not in {"SAMME", "SAMME.R"}:
+            raise ValueError("algorithm must be 'SAMME' or 'SAMME.R'")
 
         if self.scaler not in _scalers:
             raise ValueError('Invalid scaler provided; got "%s".' % self.scaler)
@@ -283,6 +286,25 @@ class LinearBoostClassifier(AdaBoostClassifier):
                 clone(_scalers[self.scaler]), clone(_scalers["minmax"])
             )
         X_transformed = self.scaler_.fit_transform(X)
+        y = np.asarray(y)
+
+        if sample_weight is not None:
+            sample_weight = np.asarray(sample_weight)
+            if sample_weight.shape[0] != X_transformed.shape[0]:
+                raise ValueError(
+                    f"sample_weight.shape == {sample_weight.shape} is incompatible with X.shape == {X_transformed.shape}"
+                )
+            nonzero_mask = (
+                sample_weight.sum(axis=1) != 0
+                if sample_weight.ndim > 1
+                else sample_weight != 0
+            )
+            X_transformed = X_transformed[nonzero_mask]
+            y = y[nonzero_mask]
+            sample_weight = sample_weight[nonzero_mask]
+        X_transformed, y = self._check_X_y(X_transformed, y)
+        self.classes_ = np.unique(y)
+        self.n_classes_ = self.classes_.shape[0]
 
         if self.class_weight is not None:
             valid_presets = ("balanced", "balanced_subsample")
@@ -307,50 +329,131 @@ class LinearBoostClassifier(AdaBoostClassifier):
                 warnings.filterwarnings(
                     "ignore",
                     category=FutureWarning,
-                    message=".*parameter 'algorithm' is deprecated.*",
+                    message=".*parameter 'algorithm' may change in the future.*",
                 )
             return super().fit(X_transformed, y, sample_weight)
+
+    def _samme_proba(self, estimator, n_classes, X):
+        """Calculate algorithm 4, step 2, equation c) of Zhu et al [1].
+
+        References
+        ----------
+        .. [1] J. Zhu, H. Zou, S. Rosset, T. Hastie, "Multi-class AdaBoost", 2009.
+
+        """
+        proba = estimator.predict_proba(X)
+
+        # Displace zero probabilities so the log is defined.
+        # Also fix negative elements which may occur with
+        # negative sample weights.
+        np.clip(proba, np.finfo(proba.dtype).eps, None, out=proba)
+        log_proba = np.log(proba)
+
+        return (n_classes - 1) * (
+            log_proba - (1.0 / n_classes) * log_proba.sum(axis=1)[:, np.newaxis]
+        )
 
     def _boost(self, iboost, X, y, sample_weight, random_state):
         estimator = self._make_estimator(random_state=random_state)
         estimator.fit(X, y, sample_weight=sample_weight)
 
-        y_pred = estimator.predict(X)
-        missclassified = y_pred != y
+        if self.algorithm == "SAMME.R":
+            y_pred = estimator.predict(X)
 
-        if self.loss_function:
-            estimator_error = self.loss_function(y, y_pred, sample_weight)
-        else:
+            incorrect = y_pred != y
             estimator_error = np.mean(
-                np.average(missclassified, weights=sample_weight, axis=0)
+                np.average(incorrect, weights=sample_weight, axis=0)
             )
 
-        if estimator_error <= 0:
-            return sample_weight, 1.0, 0.0
+            if estimator_error <= 0:
+                return sample_weight, 1.0, 0.0
+            elif estimator_error >= 0.5:
+                if len(self.estimators_) > 1:
+                    self.estimators_.pop(-1)
+                return None, None, None
 
-        if estimator_error >= 0.5:
-            self.estimators_.pop(-1)
-            if len(self.estimators_) == 0:
-                raise ValueError(
-                    "BaseClassifier in AdaBoostClassifier ensemble is worse than random, ensemble can not be fit."
+            # Compute SEFR-specific weight update
+            estimator_weight = self.learning_rate * np.log(
+                (1 - estimator_error) / estimator_error
+            )
+
+            if iboost < self.n_estimators - 1:
+                sample_weight = np.exp(
+                    np.log(sample_weight)
+                    + estimator_weight * incorrect * (sample_weight > 0)
                 )
-            return None, None, None
 
-        estimator_weight = (
-            self.learning_rate
-            * 0.5
-            * np.log((1.0 - estimator_error) / max(estimator_error, 1e-10))
-        )
+            return sample_weight, estimator_weight, estimator_error
 
-        sample_weight *= np.exp(
-            estimator_weight
-            * missclassified
-            * ((sample_weight > 0) | (estimator_weight < 0))
-        )
+        else:  # standard SAMME
+            y_pred = estimator.predict(X)
+            incorrect = y_pred != y
+            estimator_error = np.mean(np.average(incorrect, weights=sample_weight))
 
-        return sample_weight, estimator_weight, estimator_error
+            if estimator_error <= 0:
+                return sample_weight, 1.0, 0.0
+            if estimator_error >= 0.5:
+                self.estimators_.pop(-1)
+                if len(self.estimators_) == 0:
+                    raise ValueError(
+                        "BaseClassifier in AdaBoostClassifier ensemble is worse than random, ensemble cannot be fit."
+                    )
+                return None, None, None
+
+            estimator_weight = self.learning_rate * np.log(
+                (1.0 - estimator_error) / max(estimator_error, 1e-10)
+            )
+
+            sample_weight *= np.exp(estimator_weight * incorrect)
+
+            # Normalize sample weights
+            sample_weight /= np.sum(sample_weight)
+
+            return sample_weight, estimator_weight, estimator_error
 
     def decision_function(self, X):
         check_is_fitted(self)
         X_transformed = self.scaler_.transform(X)
-        return super().decision_function(X_transformed)
+
+        if self.algorithm == "SAMME.R":
+            # Proper SAMME.R decision function
+            classes = self.classes_
+            n_classes = len(classes)
+
+            pred = sum(
+                self._samme_proba(estimator, n_classes, X_transformed)
+                for estimator in self.estimators_
+            )
+            pred /= self.estimator_weights_.sum()
+            if n_classes == 2:
+                pred[:, 0] *= -1
+                return pred.sum(axis=1)
+            return pred
+
+        else:
+            # Standard SAMME algorithm from AdaBoostClassifier (discrete)
+            return super().decision_function(X_transformed)
+
+    def predict(self, X):
+        """Predict classes for X.
+
+        The predicted class of an input sample is computed as the weighted mean
+        prediction of the classifiers in the ensemble.
+
+        Parameters
+        ----------
+        X : {array-like, sparse matrix} of shape (n_samples, n_features)
+            The training input samples. Sparse matrix can be CSC, CSR, COO,
+            DOK, or LIL. COO, DOK, and LIL are converted to CSR.
+
+        Returns
+        -------
+        y : ndarray of shape (n_samples,)
+            The predicted classes.
+        """
+        pred = self.decision_function(X)
+
+        if self.n_classes_ == 2:
+            return self.classes_.take(pred > 0, axis=0)
+
+        return self.classes_.take(np.argmax(pred, axis=1), axis=0)

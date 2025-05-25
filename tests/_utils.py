@@ -16,4 +16,4 @@ else:
 
 
 def get_expected_failed_tests(estimator) -> dict[str, str]:
-    return estimator._more_tags()["_xfail_checks"]
+    return estimator._more_tags().get("_xfail_checks", {})
