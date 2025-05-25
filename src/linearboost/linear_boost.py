@@ -221,8 +221,7 @@ class LinearBoostClassifier(AdaBoostClassifier):
         super().__init__(
             estimator=SEFR(),
             n_estimators=n_estimators,
-            learning_rate=learning_rate,
-            algorithm=algorithm
+            learning_rate=learning_rate
         )
         self.algorithm = algorithm
         self.scaler = scaler
