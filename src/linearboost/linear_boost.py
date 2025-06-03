@@ -67,7 +67,7 @@ class LinearBoostClassifier(AdaBoostClassifier):
     """A LinearBoost classifier.
 
     A LinearBoost classifier is a meta-estimator based on AdaBoost and SEFR.
-    It is a fast and accurate classification algorithm built to enhance the 
+    It is a fast and accurate classification algorithm built to enhance the
     performance of the linear classifier SEFR.
 
     Parameters
@@ -107,7 +107,7 @@ class LinearBoostClassifier(AdaBoostClassifier):
     class_weight : {"balanced", "balanced_subsample"}, dict or list of dicts, \
             default=None
         Weights associated with classes in the form ``{class_label: weight}``.
-        If not given, all classes are supposed to have weight one. 
+        If not given, all classes are supposed to have weight one.
 
         The "balanced" mode uses the values of y to automatically adjust
         weights inversely proportional to class frequencies in the input data
@@ -122,9 +122,9 @@ class LinearBoostClassifier(AdaBoostClassifier):
 
     loss_function : callable, default=None
         Custom loss function for optimization. Must follow the signature:
-        
+
         ``loss_function(y_true, y_pred, sample_weight) -> float``
-        
+
         where:
         - y_true: Ground truth (correct) target values.
         - y_pred: Estimated target values.
@@ -160,7 +160,7 @@ class LinearBoostClassifier(AdaBoostClassifier):
     estimator_errors_ : ndarray of floats
         Classification error for each estimator in the boosted
         ensemble.
-    
+
     n_features_in_ : int
         Number of features seen during :term:`fit`.
 
