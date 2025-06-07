@@ -38,13 +38,16 @@ dependencies = [
 [dependency-groups]
 dev = [
     "isort",
+    "pre-commit>=3.5.0",
     "pytest>=7.0.0",
     "ruff>=0.9.2",
 ]
 
 [project.urls]
 Homepage = "https://github.com/LinearBoost/linearboost-classifier"
-Source = "https://github.com/LinearBoost/linearboost-classifier"
+Documentation = "https://linearboost.readthedocs.io"
+Repository = "https://github.com/LinearBoost/linearboost-classifier"
+Issues = "https://github.com/LinearBoost/linearboost-classifier/issues"
 
 [tool.hatch.version]
 path = "src/linearboost/__init__.py"
@@ -66,4 +69,4 @@ line-length = 120
 atomic = true
 profile = "black"
 skip_gitignore = true
-known_first_party = ["black", "blib2to3", "blackd", "_black_version"]
+known_first_party = ["linearboost"]

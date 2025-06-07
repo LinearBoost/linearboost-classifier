@@ -27,7 +27,7 @@ Version 0.1.2 of **LinearBoost Classifier** is released. Here are the changes:
 - Both SEFR and LinearBoostClassifier classes are refactored to fully adhere to Scikit-learn's conventions and API. Now, they are standard Scikit-learn estimators that can be used in Scikit-learn pipelines, grid search, etc.
 - Added unit tests (using pytest) to ensure the estimators adhere to Scikit-learn conventions.
 - Added fit_intercept parameter to SEFR similar to other linear estimators in Scikit-learn (e.g., LogisticRegression, LinearRegression, etc.).
-- Removed random_state parameter from LinearBoostClassifier as it doesn't affect the result, since SEFR doesn't expose a random_state argument. According to Scikit-learn documentation for this parameter in AdaBoostClassifier: 
+- Removed random_state parameter from LinearBoostClassifier as it doesn't affect the result, since SEFR doesn't expose a random_state argument. According to Scikit-learn documentation for this parameter in AdaBoostClassifier:
   > it is only used when estimator exposes a random_state.
 - Added docstring to both SEFR and LinearBoostClassifier classes.
 - Used uv for project and package management.
@@ -45,20 +45,20 @@ The documentation is available at https://linearboost.readthedocs.io/.
 
 The following parameters yielded optimal results during testing. All results are based on 10-fold Cross-Validation:
 
-- **`n_estimators`**:  
+- **`n_estimators`**:
   A range of 10 to 200 is suggested, with higher values potentially improving performance at the cost of longer training times.
 
-- **`learning_rate`**:  
+- **`learning_rate`**:
   Values between 0.01 and 1 typically perform well. Adjust based on the dataset's complexity and noise.
 
-- **`algorithm`**:  
+- **`algorithm`**:
   Use either `SAMME` or `SAMME.R`. The choice depends on the specific problem:
   - `SAMME`: May be better for datasets with clearer separations between classes.
   - `SAMME.R`: Can handle more nuanced class probabilities.
 
   **Note:** As of scikit-learn v1.6, the `algorithm` parameter is deprecated and will be removed in v1.8. LinearBoostClassifier will only implement the 'SAMME' algorithm in newer versions.
 
-- **`scaler`**:  
+- **`scaler`**:
   The following scaling methods are recommended based on dataset characteristics:
   - `minmax`: Best for datasets where features are on different scales but bounded.
   - `robust`: Effective for datasets with outliers.
@@ -200,10 +200,10 @@ params = {
 LinearBoost's combination of **runtime efficiency** and **high accuracy** makes it a powerful choice for real-world machine learning tasks, particularly in resource-constrained or real-time applications.
 
 ### 📰 Featured in:
-- [LightGBM Alternatives: A Comprehensive Comparison](https://nightwatcherai.com/blog/lightgbm-alternatives)  
-  _by Jordan Cole, March 11, 2025_  
+- [LightGBM Alternatives: A Comprehensive Comparison](https://nightwatcherai.com/blog/lightgbm-alternatives)
+  _by Jordan Cole, March 11, 2025_
   *Discusses how LinearBoost outperforms traditional boosting frameworks in terms of speed while maintaining accuracy.*
-  
+
 
 Future Developments
 -----------------------------
@@ -224,7 +224,7 @@ This project is licensed under the terms of the MIT license. See [LICENSE](https
 
 Some portions of this code are adapted from the scikit-learn project
 (https://scikit-learn.org), which is licensed under the BSD 3-Clause License.
-See the `licenses/` folder for details. The modifications and additions made to the original code are licensed under the MIT License © 2025 Hamidreza Keshavarz, Reza Rawassizadeh. 
+See the `licenses/` folder for details. The modifications and additions made to the original code are licensed under the MIT License © 2025 Hamidreza Keshavarz, Reza Rawassizadeh.
 The original code from scikit-learn is available at [scikit-learn GitHub repository](https://github.com/scikit-learn/scikit-learn)
 
 Special Thanks to:
