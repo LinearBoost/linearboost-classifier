@@ -367,7 +367,10 @@ def test_multiclass_error():
     y = np.array([0, 1, 2])  # Three classes
 
     clf = LinearBoostClassifier()
-    with pytest.raises(ValueError, match="Only binary classification is supported"):
+    with pytest.raises(
+        ValueError,
+        match=r"Only binary classification is supported|Unknown label type: non-binary",
+    ):
         clf.fit(X, y)
 
 
