@@ -18,7 +18,7 @@ import warnings
 from numbers import Integral, Real
 
 if sys.version_info >= (3, 11):
-    from typing import Self
+    from typing import Self  # pragma: no cover
 else:
     from typing_extensions import Self
 
