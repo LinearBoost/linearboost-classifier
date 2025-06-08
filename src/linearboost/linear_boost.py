@@ -104,18 +104,13 @@ class LinearBoostClassifier(AdaBoostClassifier):
         - 'maxabs': Uses MaxAbsScaler.
         - 'robust': Applies RobustScaler.
 
-    class_weight : {"balanced", "balanced_subsample"}, dict or list of dicts, \
-            default=None
+    class_weight : {"balanced"}, dict or list of dicts, default=None
         Weights associated with classes in the form ``{class_label: weight}``.
         If not given, all classes are supposed to have weight one.
 
         The "balanced" mode uses the values of y to automatically adjust
         weights inversely proportional to class frequencies in the input data
         as ``n_samples / (n_classes * np.bincount(y))``
-
-        The "balanced_subsample" mode is the same as "balanced" except that
-        weights are computed based on the bootstrap sample for every tree
-        grown.
 
         Note that these weights will be multiplied with sample_weight (passed
         through the fit method) if sample_weight is specified.
@@ -196,7 +191,7 @@ class LinearBoostClassifier(AdaBoostClassifier):
         "algorithm": [StrOptions({"SAMME", "SAMME.R"})],
         "scaler": [StrOptions({s for s in _scalers})],
         "class_weight": [
-            StrOptions({"balanced_subsample", "balanced"}),
+            StrOptions({"balanced"}),
             dict,
             list,
             None,
@@ -307,15 +302,9 @@ class LinearBoostClassifier(AdaBoostClassifier):
         self.n_classes_ = self.classes_.shape[0]
 
         if self.class_weight is not None:
-            valid_presets = ("balanced", "balanced_subsample")
-            if (
-                isinstance(self.class_weight, str)
-                and self.class_weight not in valid_presets
-            ):
+            if isinstance(self.class_weight, str) and self.class_weight != "balanced":
                 raise ValueError(
-                    "Valid presets for class_weight include "
-                    '"balanced" and "balanced_subsample".'
-                    'Given "%s".' % self.class_weight
+                    f'Valid preset for class_weight is "balanced". Given "{self.class_weight}".'
                 )
             expanded_class_weight = compute_sample_weight(self.class_weight, y)
 
