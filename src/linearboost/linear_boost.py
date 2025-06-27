@@ -6,8 +6,8 @@
 # See https://github.com/scikit-learn/scikit-learn/blob/main/COPYING for details.
 #
 # Additional code and modifications:
-#   - Hamidreza Keshavarz (hamid9@outlook.com) — machine learning logic, design, and new algorithms
-#   - Mehdi Samsami (mehdisamsami@live.com) — software refactoring, compatibility with scikit-learn framework, and packaging
+#    - Hamidreza Keshavarz (hamid9@outlook.com) — machine learning logic, design, and new algorithms
+#    - Mehdi Samsami (mehdisamsami@live.com) — software refactoring, compatibility with scikit-learn framework, and packaging
 #
 # The combined work is licensed under the MIT License.
 
@@ -104,6 +104,20 @@ class LinearBoostClassifier(AdaBoostClassifier):
         - 'maxabs': Uses MaxAbsScaler.
         - 'robust': Applies RobustScaler.
 
+    kernel : {'linear', 'poly', 'rbf', 'sigmoid'} or callable, default='linear'
+        Specifies the kernel type to be used in the algorithm.
+        If a callable is given, it is used to pre-compute the kernel matrix.
+
+    gamma : float, default=None
+        Kernel coefficient for 'rbf', 'poly' and 'sigmoid'. If None, then it is
+        set to 1.0 / n_features.
+
+    degree : int, default=3
+        Degree for 'poly' kernels. Ignored by other kernels.
+
+    coef0 : float, default=1
+        Independent term in kernel function. It is only significant in 'poly' and 'sigmoid'.
+
     class_weight : {"balanced", "balanced_subsample"}, dict or list of dicts, \
             default=None
         Weights associated with classes in the form ``{class_label: weight}``.
@@ -195,6 +209,10 @@ class LinearBoostClassifier(AdaBoostClassifier):
         "learning_rate": [Interval(Real, 0, None, closed="neither")],
         "algorithm": [StrOptions({"SAMME", "SAMME.R"})],
         "scaler": [StrOptions({s for s in _scalers})],
+        "kernel": [StrOptions({"linear", "poly", "rbf", "sigmoid"}), callable],
+        "gamma": [Interval(Real, 0, None, closed="left"), None],
+        "degree": [Interval(Integral, 1, None, closed="left"), None],
+        "coef0": [Real, None],
         "class_weight": [
             StrOptions({"balanced_subsample", "balanced"}),
             dict,
@@ -213,14 +231,26 @@ class LinearBoostClassifier(AdaBoostClassifier):
         scaler="minmax",
         class_weight=None,
         loss_function=None,
+        kernel="linear",
+        gamma=None,
+        degree=3,
+        coef0=1,
     ):
         super().__init__(
-            estimator=SEFR(), n_estimators=n_estimators, learning_rate=learning_rate
+            estimator=SEFR(
+                kernel=kernel, gamma=gamma, degree=degree, coef0=coef0
+            ),
+            n_estimators=n_estimators,
+            learning_rate=learning_rate,
         )
         self.algorithm = algorithm
         self.scaler = scaler
         self.class_weight = class_weight
         self.loss_function = loss_function
+        self.kernel = kernel
+        self.gamma = gamma
+        self.degree = degree
+        self.coef0 = coef0
 
     if SKLEARN_V1_6_OR_LATER:
 
