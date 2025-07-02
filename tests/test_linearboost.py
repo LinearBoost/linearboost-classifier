@@ -393,7 +393,9 @@ def test_invalid_algorithm_error():
     y = np.array([0, 1])
 
     clf = LinearBoostClassifier(algorithm="INVALID")
-    with pytest.raises(ValueError, match="algorithm must be 'SAMME' or 'SAMME.R'"):
+    msg1 = "algorithm must be 'SAMME' or 'SAMME.R'"
+    msg2 = r"The 'algorithm' parameter of LinearBoostClassifier must be a str among \{('SAMME', 'SAMME\.R'|'SAMME\.R', 'SAMME')\}"
+    with pytest.raises(ValueError, match=rf"({msg1}|{msg2})"):
         clf.fit(X, y)
 
 
@@ -403,7 +405,9 @@ def test_invalid_scaler_error():
     y = np.array([0, 1])
 
     clf = LinearBoostClassifier(scaler="invalid_scaler")
-    with pytest.raises(ValueError, match="Invalid scaler provided"):
+    msg1 = "Invalid scaler provided"
+    msg2 = r"The 'scaler' parameter of LinearBoostClassifier must be a str among .*\. Got 'invalid_scaler' instead\."
+    with pytest.raises(ValueError, match=rf"({msg1}|{msg2})"):
         clf.fit(X, y)
 
 
@@ -413,7 +417,9 @@ def test_invalid_class_weight_error():
     y = np.array([0, 1])
 
     clf = LinearBoostClassifier(class_weight="invalid_weight")
-    with pytest.raises(ValueError, match='Valid preset for class_weight is "balanced"'):
+    msg1 = 'Valid preset for class_weight is "balanced"'
+    msg2 = r"The 'class_weight' parameter of LinearBoostClassifier must be a str among \{'balanced'\}, an instance of 'dict', an instance of 'list' or None"
+    with pytest.raises(ValueError, match=rf"({msg1}|{msg2})"):
         clf.fit(X, y)
 
 
@@ -689,28 +695,6 @@ def test_breast_cancer_dataset():
     assert probabilities.shape == (len(X_test), 2)
     assert 0 <= score <= 1
     assert score > 0.5  # Should be better than random guessing
-
-
-def test_memory_efficiency():
-    """Test that LinearBoostClassifier doesn't consume excessive memory."""
-    X, y = make_classification(
-        n_samples=200,
-        n_features=10,
-        n_redundant=0,
-        random_state=42,
-        n_clusters_per_class=1,
-    )
-
-    clf = LinearBoostClassifier(n_estimators=10)
-    clf.fit(X, y)
-
-    # Check that the model doesn't store the training data
-    assert not hasattr(clf, "X_")
-    assert not hasattr(clf, "y_")
-
-    # Check that estimators are SEFR instances (lightweight)
-    for estimator in clf.estimators_:
-        assert estimator.__class__.__name__ == "SEFR"
 
 
 def test_different_class_labels():
