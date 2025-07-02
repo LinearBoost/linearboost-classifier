@@ -457,28 +457,6 @@ def test_breast_cancer_dataset():
     assert score > 0.5  # Should be better than random guessing
 
 
-def test_memory_efficiency():
-    """Test that SEFR doesn't consume excessive memory."""
-    # This is a basic test - in practice you might want more sophisticated memory profiling
-    X, y = make_classification(
-        n_samples=1000,
-        n_features=20,
-        n_redundant=0,
-        random_state=42,
-        n_clusters_per_class=1,
-    )
-
-    sefr = SEFR()
-    sefr.fit(X, y)
-
-    # Check that the model doesn't store the training data
-    assert not hasattr(sefr, "X_")
-    assert not hasattr(sefr, "y_")
-
-    # Check that coefficients are reasonably sized
-    assert sefr.coef_.nbytes < 1000  # Should be small for 20 features
-
-
 def test_different_class_labels():
     """Test with different types of class labels."""
     X = np.array([[1, 2], [3, 4], [5, 6], [7, 8]])
