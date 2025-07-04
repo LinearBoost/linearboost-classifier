@@ -145,7 +145,7 @@ class _DenseAdaBoostClassifier(AdaBoostClassifier):
         ------
         z : float
         """
-        return super().staged_score(X, y, sample_weight)
+        yield from super().staged_score(X, y, sample_weight)
 
     def staged_predict(self, X):
         """Return staged predictions for X.
@@ -167,7 +167,7 @@ class _DenseAdaBoostClassifier(AdaBoostClassifier):
         y : generator of ndarray of shape (n_samples,)
             The predicted classes.
         """
-        return super().staged_predict(X)
+        yield from super().staged_predict(X)
 
     def staged_decision_function(self, X):
         """Compute decision function of ``X`` for each boosting iteration.
@@ -190,7 +190,7 @@ class _DenseAdaBoostClassifier(AdaBoostClassifier):
             values closer to -1 or 1 mean more like the first or second
             class in ``classes_``, respectively.
         """
-        return super().staged_decision_function(X)
+        yield from super().staged_decision_function(X)
 
     def predict_proba(self, X):
         """Predict class probabilities for X.
@@ -235,7 +235,7 @@ class _DenseAdaBoostClassifier(AdaBoostClassifier):
             The class probabilities of the input samples. The order of
             outputs is the same of that of the :term:`classes_` attribute.
         """
-        return super().staged_predict_proba(X)
+        yield from super().staged_predict_proba(X)
 
     def predict_log_proba(self, X):
         """Predict class log-probabilities for X.
