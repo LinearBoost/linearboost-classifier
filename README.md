@@ -1,6 +1,6 @@
 # LinearBoost Classifier
 
-![Lastest Release](https://img.shields.io/badge/release-v0.1.2-green)
+![Lastest Release](https://img.shields.io/badge/release-v0.1.3-green)
 [![PyPI Version](https://img.shields.io/pypi/v/linearboost)](https://pypi.org/project/linearboost/)
 ![Python Versions](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)
 
