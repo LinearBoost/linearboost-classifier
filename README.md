@@ -19,7 +19,40 @@ Key Features:
 - Exceptional Speed: Blazing fast training and inference times
 - Resource Efficient: Low memory usage, ideal for large datasets
 
-## 🚀 New Major Release (v0.1.2)
+## 🚀 New Major Release (v0.1.3)
+The `SEFR` classifier uses kernels to solve non-linear problems. Kernels work by projecting data into a different perspective, allowing a simple linear model to capture complex, curved patterns.
+
+---
+
+### Linear Kernel
+
+This is the default setting and performs no transformation. It's the fastest option and works best when the data is already simple and doesn't require complex boundaries.
+
+---
+
+### Polynomial Kernel
+
+This kernel creates feature interactions to model curved or complex relationships in the data.
+
+* **`degree`**: Sets the complexity of the feature combinations.
+* **`coef0`**: Balances the influence between high-degree and low-degree feature interactions.
+
+---
+
+### RBF Kernel
+
+A powerful and flexible kernel that can handle very complex boundaries. It works by considering the distance between data points, making it a strong general-purpose choice.
+
+* **`gamma`**: Controls the reach of a single training point's influence. Small values create smoother boundaries, while large values create more complex ones.
+
+---
+
+### Sigmoid Kernel
+
+Inspired by neural networks, this kernel is useful for certain classification tasks that follow a sigmoid shape.
+
+* **`gamma`**: Scales the data's influence.
+* **`coef0`**: Shifts the decision boundary.## 🚀 New Major Release (v0.1.2)
 Version 0.1.2 of **LinearBoost Classifier** is released. Here are the changes:
 
 - The codebase is refactored into a new structure.
