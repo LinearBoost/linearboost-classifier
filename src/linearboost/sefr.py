@@ -304,6 +304,7 @@ class SEFR(LinearClassifierMixin, BaseEstimator):
           Returns the probability of the sample for each class in the model,
           where classes are ordered as they are in ``self.classes_``.
         """
+        check_is_fitted(self)
         norm_coef = np.linalg.norm(self.coef_)
         if norm_coef == 0:
             # Handle the case of a zero-norm coefficient vector to avoid division by zero
