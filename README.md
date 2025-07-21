@@ -53,8 +53,8 @@ Inspired by neural networks, this kernel is useful for certain classification ta
 
 * **`gamma`**: Scales the data's influence.
 * **`coef0`**: Shifts the decision boundary.
-*
-* ## 🚀 New Major Release (v0.1.2)
+
+## 🚀 New Major Release (v0.1.2)
 Version 0.1.2 of **LinearBoost Classifier** is released. Here are the changes:
 
 - The codebase is refactored into a new structure.
