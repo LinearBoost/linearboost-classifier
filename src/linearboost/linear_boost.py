@@ -237,9 +237,7 @@ class LinearBoostClassifier(AdaBoostClassifier):
         coef0=1,
     ):
         super().__init__(
-            estimator=SEFR(
-                kernel=kernel, gamma=gamma, degree=degree, coef0=coef0
-            ),
+            estimator=SEFR(kernel=kernel, gamma=gamma, degree=degree, coef0=coef0),
             n_estimators=n_estimators,
             learning_rate=learning_rate,
         )
