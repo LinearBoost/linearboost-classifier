@@ -312,6 +312,7 @@ class SEFR(LinearClassifierMixin, BaseEstimator):
         else:
             score = self.decision_function(X) / norm_coef
         proba = 1.0 / (1.0 + np.exp(-score))
+        proba = np.clip(proba, 1e-9, 1 - 1e-9)
         return np.column_stack((1.0 - proba, proba))
 
     def predict_log_proba(self, X):

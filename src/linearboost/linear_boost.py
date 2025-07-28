@@ -561,6 +561,11 @@ class LinearBoostClassifier(_DenseAdaBoostClassifier):
                     category=FutureWarning,
                     message=".*parameter 'algorithm' may change in the future.*",
                 )
+            warnings.filterwarnings(
+                "ignore",
+                category=FutureWarning,
+                message=".*parameter 'algorithm' is deprecated.*",
+            )
             return super().fit(X_transformed, y, sample_weight)
 
     @staticmethod
