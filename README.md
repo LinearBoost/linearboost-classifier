@@ -6,6 +6,7 @@
 [![PyPI Downloads](https://static.pepy.tech/badge/linearboost)](https://pepy.tech/projects/linearboost)
 
 LinearBoost is a fast and accurate classification algorithm built to enhance the performance of the linear classifier SEFR. It combines efficiency and accuracy, delivering state-of-the-art F1 scores and classification performance.
+[📓 Demo Notebook: How to Use LinearBoost](notebooks/demo_linearboost_usage.ipynb)
 
 In benchmarks across seven well-known datasets, LinearBoost:
 
