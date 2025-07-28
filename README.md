@@ -5,10 +5,18 @@
 ![Python Versions](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)
 [![PyPI Downloads](https://static.pepy.tech/badge/linearboost)](https://pepy.tech/projects/linearboost)
 
+## 🧪 Quickstart Demo
+
+Want to see how LinearBoost works in practice?
+
+➡️ [**Run the demo notebook**](notebooks/demo_linearboost_usage.ipynb)
+
+This Jupyter notebook shows how to:
+- Load and prepare data
+- Train `LinearBoostClassifier`
+- Evaluate using F1 score and cross-validation
+
 LinearBoost is a fast and accurate classification algorithm built to enhance the performance of the linear classifier SEFR. It combines efficiency and accuracy, delivering state-of-the-art F1 scores and classification performance.
-
-
-[📓 Demo Notebook: How to Use LinearBoost](notebooks/demo_linearboost_usage.ipynb)
 
 In benchmarks across seven well-known datasets, LinearBoost:
 
