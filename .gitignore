@@ -134,4 +134,8 @@ catboost_info/catboost_training.json
 catboost_info/learn/events.out.tfevents
 catboost_info/learn_error.tsv
 catboost_info/time_left.tsv
-*.ipynb
+notebooks/catboost_info/catboost_training.json
+notebooks/catboost_info/learn/events.out.tfevents
+notebooks/catboost_info/learn_error.tsv
+notebooks/catboost_info/time_left.tsv
+.DS_Store
