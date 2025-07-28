@@ -564,7 +564,7 @@ class LinearBoostClassifier(_DenseAdaBoostClassifier):
             warnings.filterwarnings(
                 "ignore",
                 category=FutureWarning,
-                message=".*parameter 'algorithm' is deprecated.*"
+                message=".*parameter 'algorithm' is deprecated.*",
             )
             return super().fit(X_transformed, y, sample_weight)
 
