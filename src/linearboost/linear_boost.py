@@ -437,10 +437,16 @@ class LinearBoostClassifier(_DenseAdaBoostClassifier):
         coef0=1,
     ):
         # Create SEFR estimator with 'precomputed' kernel if we're using kernels
-        if kernel == "linear":
+        # Use string comparison that's safe for arrays (will raise TypeError for arrays)
+        try:
+            if kernel == "linear":
+                base_estimator = SEFR(kernel="linear")
+            else:
+                base_estimator = SEFR(kernel="precomputed")
+        except (ValueError, TypeError):
+            # If kernel is an array or invalid type, default to linear
+            # Parameter validation will catch this later in fit()
             base_estimator = SEFR(kernel="linear")
-        else:
-            base_estimator = SEFR(kernel="precomputed")
 
         super().__init__(
             estimator=base_estimator,
