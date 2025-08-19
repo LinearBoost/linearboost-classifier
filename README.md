@@ -30,7 +30,7 @@ Key Features:
 - Exceptional Speed: Blazing fast training and inference times
 - Resource Efficient: Low memory usage, ideal for large datasets
 
-## 🚀 New Major Release (v0.1.3)
+## 🚀 New Major Release (v0.1.4)
 The `LinearBoost` and `SEFR` classifiers use kernels to solve non-linear problems. Kernels work by projecting data into a different perspective, allowing a simple linear model to capture complex, curved patterns.
 
 ---
