@@ -44,13 +44,14 @@ class SEFR(LinearClassifierMixin, BaseEstimator):
       Specifies if a constant (a.k.a. bias or intercept) should be
       added to the decision function.
 
-    kernel : {'linear', 'poly', 'rbf', 'sigmoid'} or callable, default='linear'
+    kernel : {'linear', 'poly', 'rbf', 'sigmoid', 'precomputed'} or callable, default='linear'
       Specifies the kernel type to be used in the algorithm.
       If a callable is given, it is used to pre-compute the kernel matrix.
+      If 'precomputed', X is assumed to be a kernel matrix.
 
     gamma : float, default=None
       Kernel coefficient for 'rbf', 'poly' and 'sigmoid'. If None, then it is
-      set to 1.0 / n_features.
+      set to 1.0 / n_features. Ignored when kernel='precomputed'.
 
     degree : int, default=3
       Degree for 'poly' kernels. Ignored by other kernels.
@@ -80,7 +81,7 @@ class SEFR(LinearClassifierMixin, BaseEstimator):
       has feature names that are all strings.
 
     X_fit_ : ndarray of shape (n_samples, n_features)
-      The training data, stored when a kernel is used.
+      The training data, stored when a kernel is used (except for 'precomputed').
 
     Notes
     -----
@@ -100,7 +101,10 @@ class SEFR(LinearClassifierMixin, BaseEstimator):
 
     _parameter_constraints: dict = {
         "fit_intercept": ["boolean"],
-        "kernel": [StrOptions({"linear", "poly", "rbf", "sigmoid"}), callable],
+        "kernel": [
+            StrOptions({"linear", "poly", "rbf", "sigmoid", "precomputed"}),
+            callable,
+        ],
         "gamma": [Interval(Real, 0, None, closed="left"), None],
         "degree": [Interval(Integral, 1, None, closed="left"), None],
         "coef0": [Real, None],
@@ -144,28 +148,58 @@ class SEFR(LinearClassifierMixin, BaseEstimator):
         }
 
     def _check_X(self, X) -> np.ndarray:
-        X = validate_data(
-            self,
-            X,
-            dtype="numeric",
-            force_all_finite=True,
-            reset=False,
-        )
-        if X.shape[1] != self.n_features_in_:
-            raise ValueError(
-                "Expected input with %d features, got %d instead."
-                % (self.n_features_in_, X.shape[1])
+        if self.kernel == "precomputed":
+            X = validate_data(
+                self,
+                X,
+                dtype="numeric",
+                force_all_finite=True,
+                reset=False,
             )
+            # For precomputed kernels during prediction, X should be (n_test_samples, n_train_samples)
+            if hasattr(self, "n_features_in_") and X.shape[1] != self.n_features_in_:
+                raise ValueError(
+                    f"Precomputed kernel matrix should have {self.n_features_in_} columns "
+                    f"(number of training samples), got {X.shape[1]}."
+                )
+        else:
+            X = validate_data(
+                self,
+                X,
+                dtype="numeric",
+                force_all_finite=True,
+                reset=False,
+            )
+            if hasattr(self, "n_features_in_") and X.shape[1] != self.n_features_in_:
+                raise ValueError(
+                    "Expected input with %d features, got %d instead."
+                    % (self.n_features_in_, X.shape[1])
+                )
         return X
 
     def _check_X_y(self, X, y) -> tuple[np.ndarray, np.ndarray]:
-        X, y = check_X_y(
-            X,
-            y,
-            dtype="numeric",
-            force_all_finite=True,
-            estimator=self,
-        )
+        if self.kernel == "precomputed":
+            # For precomputed kernels, X should be a square kernel matrix
+            X, y = check_X_y(
+                X,
+                y,
+                dtype="numeric",
+                force_all_finite=True,
+                estimator=self,
+            )
+            if X.shape[0] != X.shape[1]:
+                raise ValueError(
+                    f"Precomputed kernel matrix should be square, got shape {X.shape}."
+                )
+        else:
+            X, y = check_X_y(
+                X,
+                y,
+                dtype="numeric",
+                force_all_finite=True,
+                estimator=self,
+            )
+
         check_classification_targets(y)
 
         if np.unique(y).shape[0] == 1:
@@ -180,6 +214,10 @@ class SEFR(LinearClassifierMixin, BaseEstimator):
         return X, y
 
     def _get_kernel_matrix(self, X, Y=None):
+        if self.kernel == "precomputed":
+            # X is already a kernel matrix
+            return X
+
         if Y is None:
             Y = self.X_fit_
 
@@ -203,9 +241,10 @@ class SEFR(LinearClassifierMixin, BaseEstimator):
 
         Parameters
         ----------
-        X : {array-like, sparse matrix} of shape (n_samples, n_features)
+        X : {array-like, sparse matrix} of shape (n_samples, n_features) or (n_samples, n_samples)
           Training vector, where `n_samples` is the number of samples and
           `n_features` is the number of features.
+          If kernel='precomputed', X should be a square kernel matrix.
 
         y : array-like of shape (n_samples,)
           Target vector relative to X.
@@ -219,15 +258,25 @@ class SEFR(LinearClassifierMixin, BaseEstimator):
         self
           Fitted estimator.
         """
-        _check_n_features(self, X=X, reset=True)
-        _check_feature_names(self, X=X, reset=True)
+        if self.kernel == "precomputed":
+            _check_n_features(self, X=X, reset=True)
+            _check_feature_names(self, X=X, reset=True)
+        else:
+            _check_n_features(self, X=X, reset=True)
+            _check_feature_names(self, X=X, reset=True)
 
         X, y = self._check_X_y(X, y)
-        self.X_fit_ = X
+
+        # Store training data only for non-precomputed kernels
+        if self.kernel != "precomputed":
+            self.X_fit_ = X
+
         self.classes_, y_ = np.unique(y, return_inverse=True)
 
         if self.kernel == "linear":
             K = X
+        elif self.kernel == "precomputed":
+            K = X  # X is already the kernel matrix
         else:
             K = self._get_kernel_matrix(X)
 
@@ -277,10 +326,14 @@ class SEFR(LinearClassifierMixin, BaseEstimator):
     def decision_function(self, X):
         check_is_fitted(self)
         X = self._check_X(X)
+
         if self.kernel == "linear":
             K = X
+        elif self.kernel == "precomputed":
+            K = X  # X is already a kernel matrix
         else:
             K = self._get_kernel_matrix(X)
+
         return (
             safe_sparse_dot(K, self.coef_.T, dense_output=True) + self.intercept_
         ).ravel()
@@ -294,9 +347,10 @@ class SEFR(LinearClassifierMixin, BaseEstimator):
 
         Parameters
         ----------
-        X : array-like of shape (n_samples, n_features)
+        X : array-like of shape (n_samples, n_features) or (n_samples, n_train_samples)
           Vector to be scored, where `n_samples` is the number of samples and
           `n_features` is the number of features.
+          If kernel='precomputed', X should have shape (n_samples, n_train_samples).
 
         Returns
         -------
@@ -324,9 +378,10 @@ class SEFR(LinearClassifierMixin, BaseEstimator):
 
         Parameters
         ----------
-        X : array-like of shape (n_samples, n_features)
+        X : array-like of shape (n_samples, n_features) or (n_samples, n_train_samples)
           Vector to be scored, where `n_samples` is the number of samples and
           `n_features` is the number of features.
+          If kernel='precomputed', X should have shape (n_samples, n_train_samples).
 
         Returns
         -------

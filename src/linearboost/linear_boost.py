@@ -26,6 +26,7 @@ else:
 import numpy as np
 from sklearn.base import clone
 from sklearn.ensemble import AdaBoostClassifier
+from sklearn.metrics.pairwise import pairwise_kernels
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import (
     MaxAbsScaler,
@@ -95,8 +96,9 @@ class _DenseAdaBoostClassifier(AdaBoostClassifier):
         iboost : int
             The index of the current boost iteration.
 
-        X : {array-like} of shape (n_samples, n_features)
-            The training input samples.
+        X : {array-like} of shape (n_samples, n_features) or (n_samples, n_samples)
+            The training input samples. For kernel methods, this will be a
+            precomputed kernel matrix.
 
         y : array-like of shape (n_samples,)
             The target values (class labels).
@@ -375,6 +377,14 @@ class LinearBoostClassifier(_DenseAdaBoostClassifier):
     scaler_ : transformer
         The scaler instance used to transform the data.
 
+    X_fit_ : ndarray of shape (n_samples, n_features)
+        The training data after scaling, stored when kernel != 'linear'
+        for prediction purposes.
+
+    K_train_ : ndarray of shape (n_samples, n_samples)
+        The precomputed kernel matrix on training data, stored when
+        kernel != 'linear'.
+
     Notes
     -----
     This classifier only supports binary classification tasks.
@@ -426,8 +436,14 @@ class LinearBoostClassifier(_DenseAdaBoostClassifier):
         degree=3,
         coef0=1,
     ):
+        # Create SEFR estimator with 'precomputed' kernel if we're using kernels
+        if kernel == "linear":
+            base_estimator = SEFR(kernel="linear")
+        else:
+            base_estimator = SEFR(kernel="precomputed")
+
         super().__init__(
-            estimator=SEFR(kernel=kernel, gamma=gamma, degree=degree, coef0=coef0),
+            estimator=base_estimator,
             n_estimators=n_estimators,
             learning_rate=learning_rate,
         )
@@ -489,6 +505,37 @@ class LinearBoostClassifier(_DenseAdaBoostClassifier):
 
         return X, y
 
+    def _get_kernel_matrix(self, X, Y=None):
+        """Compute kernel matrix between X and Y.
+
+        Parameters
+        ----------
+        X : array-like of shape (n_samples_X, n_features)
+            Input samples.
+        Y : array-like of shape (n_samples_Y, n_features), default=None
+            Input samples. If None, use X.
+
+        Returns
+        -------
+        K : ndarray of shape (n_samples_X, n_samples_Y)
+            Kernel matrix.
+        """
+        if Y is None:
+            Y = X
+
+        if callable(self.kernel):
+            return self.kernel(X, Y)
+        else:
+            return pairwise_kernels(
+                X,
+                Y,
+                metric=self.kernel,
+                filter_params=True,
+                gamma=self.gamma,
+                degree=self.degree,
+                coef0=self.coef0,
+            )
+
     def fit(self, X, y, sample_weight=None) -> Self:
         """Build a LinearBoost classifier from the training set (X, y).
 
@@ -515,6 +562,7 @@ class LinearBoostClassifier(_DenseAdaBoostClassifier):
         if self.scaler not in _scalers:
             raise ValueError('Invalid scaler provided; got "%s".' % self.scaler)
 
+        # Apply scaling
         if self.scaler == "minmax":
             self.scaler_ = clone(_scalers["minmax"])
         else:
@@ -538,9 +586,19 @@ class LinearBoostClassifier(_DenseAdaBoostClassifier):
             X_transformed = X_transformed[nonzero_mask]
             y = y[nonzero_mask]
             sample_weight = sample_weight[nonzero_mask]
+
         X_transformed, y = self._check_X_y(X_transformed, y)
         self.classes_ = np.unique(y)
         self.n_classes_ = self.classes_.shape[0]
+
+        # Store training data for kernel computation during prediction
+        if self.kernel != "linear":
+            self.X_fit_ = X_transformed
+            # Precompute kernel matrix ONCE for all estimators
+            self.K_train_ = self._get_kernel_matrix(X_transformed)
+            training_data = self.K_train_
+        else:
+            training_data = X_transformed
 
         if self.class_weight is not None:
             if isinstance(self.class_weight, str) and self.class_weight != "balanced":
@@ -566,7 +624,8 @@ class LinearBoostClassifier(_DenseAdaBoostClassifier):
                 category=FutureWarning,
                 message=".*parameter 'algorithm' is deprecated.*",
             )
-            return super().fit(X_transformed, y, sample_weight)
+            # Pass the precomputed kernel matrix (or raw features for linear)
+            return super().fit(training_data, y, sample_weight)
 
     @staticmethod
     def _samme_proba(estimator, n_classes, X):
@@ -590,6 +649,15 @@ class LinearBoostClassifier(_DenseAdaBoostClassifier):
         )
 
     def _boost(self, iboost, X, y, sample_weight, random_state):
+        """
+        Implement a single boost using precomputed kernel matrix or raw features.
+
+        Parameters
+        ----------
+        X : ndarray
+            For kernel methods, this is the precomputed kernel matrix.
+            For linear methods, this is the raw feature matrix.
+        """
         estimator = self._make_estimator(random_state=random_state)
         estimator.fit(X, y, sample_weight=sample_weight)
 
@@ -668,13 +736,20 @@ class LinearBoostClassifier(_DenseAdaBoostClassifier):
         check_is_fitted(self)
         X_transformed = self.scaler_.transform(X)
 
+        if self.kernel == "linear":
+            # For linear kernel, pass raw features
+            test_data = X_transformed
+        else:
+            # For kernel methods, compute kernel matrix between test and training data
+            test_data = self._get_kernel_matrix(X_transformed, self.X_fit_)
+
         if self.algorithm == "SAMME.R":
             # Proper SAMME.R decision function
             classes = self.classes_
             n_classes = len(classes)
 
             pred = sum(
-                self._samme_proba(estimator, n_classes, X_transformed)
+                self._samme_proba(estimator, n_classes, test_data)
                 for estimator in self.estimators_
             )
             pred /= self.estimator_weights_.sum()
@@ -685,7 +760,7 @@ class LinearBoostClassifier(_DenseAdaBoostClassifier):
 
         else:
             # Standard SAMME algorithm from AdaBoostClassifier (discrete)
-            return super().decision_function(X_transformed)
+            return super().decision_function(test_data)
 
     def predict(self, X):
         """Predict classes for X.
