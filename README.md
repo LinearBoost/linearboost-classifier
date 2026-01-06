@@ -1,6 +1,6 @@
 # LinearBoost Classifier
 
-![Lastest Release](https://img.shields.io/badge/release-v0.1.4-green)
+![Lastest Release](https://img.shields.io/badge/release-v0.1.5-green)
 [![PyPI Version](https://img.shields.io/pypi/v/linearboost)](https://pypi.org/project/linearboost/)
 ![Python Versions](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)
 [![PyPI Downloads](https://static.pepy.tech/badge/linearboost)](https://pepy.tech/projects/linearboost)
@@ -30,7 +30,82 @@ Key Features:
 - Exceptional Speed: Blazing fast training and inference times
 - Resource Efficient: Low memory usage, ideal for large datasets
 
-## 🚀 New Major Release (v0.1.4)
+---
+
+## 🚀 New in Version 0.1.5
+
+The latest release introduces major architectural improvements designed for **scalability**, **robustness on imbalanced data**, and **training speed**.
+
+### ⚡ Scalable Kernel Approximation
+
+LinearBoost now supports **Kernel Approximation** via `kernel_approx='rff'` or `kernel_approx='nystrom'`.
+
+**Why it matters:** Previously, non-linear kernels required computing a full \(O(n^2)\) kernel matrix, which is memory-intensive for large datasets.
+
+**New Capability:** You can now map inputs to a lower-dimensional feature space using:
+- **Random Fourier Features (RFF)** — for RBF kernels
+- **Nyström Approximation** — for any kernel type
+
+This enables linear time complexity while retaining non-linear decision boundaries.
+
+```python
+# Example: Using kernel approximation for scalable non-linear classification
+clf = LinearBoostClassifier(
+    kernel='rbf',
+    kernel_approx='rff',  # or 'nystrom'
+    n_components=256
+)
+```
+
+### 🎯 Stochastic Boosting & Regularization
+
+Advanced regularization techniques to prevent overfitting and reduce variance:
+
+- **Subsampling (`subsample`)**: Enables Stochastic Gradient Boosting by training each estimator on a random fraction of the training data.
+- **Shrinkage (`shrinkage`)**: Scales the contribution of each new estimator (learning rate decay), effectively "slowing down" learning for better generalization.
+
+```python
+clf = LinearBoostClassifier(
+    subsample=0.8,    # Use 80% of data per iteration
+    shrinkage=0.9     # Scale each estimator's contribution by 0.9
+)
+```
+
+### ⚖️ Optimized for Imbalanced Data
+
+The internal boosting logic has been overhauled to prioritize **F1-Score optimization**:
+
+- **Adaptive Class Weighting**: The algorithm dynamically adjusts sample weights based on class frequencies within the boosting loop, aggressively correcting errors on minority classes.
+- **F1-Based Estimator Weighting**: Estimators are rewarded not just for accuracy, but specifically for their F1 performance.
+
+### ⏱️ Early Stopping
+
+Training can now stop automatically when validation scores plateau:
+
+- **Standard validation splits** via `validation_fraction`
+- **Out-of-Bag (OOB) Evaluation**: When using subsampling (`subsample < 1.0`), LinearBoost utilizes unused samples for validation without reducing training set size.
+
+```python
+clf = LinearBoostClassifier(
+    n_estimators=500,
+    early_stopping=True,
+    validation_fraction=0.1,  # 10% held out for validation
+    n_iter_no_change=5,       # Stop after 5 iterations with no improvement
+    tol=1e-4
+)
+
+# Or with OOB evaluation (automatic when subsampling)
+clf = LinearBoostClassifier(
+    n_estimators=500,
+    subsample=0.8,            # Enables OOB evaluation
+    early_stopping=True,
+    n_iter_no_change=5
+)
+```
+
+---
+
+## 🚀 New Major Release (v0.1.3)
 The `LinearBoost` and `SEFR` classifiers use kernels to solve non-linear problems. Kernels work by projecting data into a different perspective, allowing a simple linear model to capture complex, curved patterns.
 
 ---
@@ -92,7 +167,7 @@ The documentation is available at https://linearboost.readthedocs.io/.
 The following parameters yielded optimal results during testing. All results are based on 10-fold Cross-Validation:
 
 - **`n_estimators`**:
-  A range of 10 to 200 is suggested, with higher values potentially improving performance at the cost of longer training times.
+  A range of 10 to 200 is suggested, with higher values potentially improving performance at the cost of longer training times. When using `early_stopping=True`, you can set a higher value (e.g., 500) and let training stop automatically.
 
 - **`learning_rate`**:
   Values between 0.01 and 1 typically perform well. Adjust based on the dataset's complexity and noise.
@@ -110,6 +185,28 @@ The following parameters yielded optimal results during testing. All results are
   - `robust`: Effective for datasets with outliers.
   - `quantile-uniform`: Normalizes features to a uniform distribution.
   - `quantile-normal`: Normalizes features to a normal (Gaussian) distribution.
+
+- **`kernel`** *(new in v0.1.3)*:
+  Choose based on data complexity:
+  - `linear`: Fastest, for linearly separable data.
+  - `rbf`: Most flexible, works well for complex non-linear patterns.
+  - `poly`: For polynomial relationships.
+  - `sigmoid`: For sigmoid-like decision boundaries.
+
+- **`kernel_approx`** *(new in v0.1.5)*:
+  For large datasets with non-linear kernels:
+  - `None`: Use full kernel matrix (default, exact but \(O(n^2)\) memory).
+  - `'rff'`: Random Fourier Features (only with `kernel='rbf'`).
+  - `'nystrom'`: Nyström approximation (works with any kernel).
+
+- **`subsample`** *(new in v0.1.5)*:
+  Values in (0, 1] control stochastic boosting. Use `0.8` for variance reduction while maintaining speed.
+
+- **`shrinkage`** *(new in v0.1.5)*:
+  Values in (0, 1] scale each estimator's contribution. Use `0.8-0.95` to improve generalization.
+
+- **`early_stopping`** *(new in v0.1.5)*:
+  Set to `True` with `n_iter_no_change=5` and `tol=1e-4` to automatically stop training when validation performance plateaus.
 
 These parameters should serve as a solid starting point for most datasets. For fine-tuning, consider using hyperparameter optimization tools like [Optuna](https://optuna.org/).
 
@@ -235,10 +332,15 @@ params = {
 #### LinearBoost
 ```python
 params = {
-    'n_estimators': trial.suggest_int('n_estimators', 10, 200),
+    'n_estimators': trial.suggest_int('n_estimators', 10, 500),
     'learning_rate': trial.suggest_loguniform('learning_rate', 0.01, 1),
     'algorithm': trial.suggest_categorical('algorithm', ['SAMME', 'SAMME.R']),
-    'scaler': trial.suggest_categorical('scaler', ['minmax', 'robust', 'quantile-uniform', 'quantile-normal'])
+    'scaler': trial.suggest_categorical('scaler', ['minmax', 'robust', 'quantile-uniform', 'quantile-normal']),
+    'kernel': trial.suggest_categorical('kernel', ['linear', 'rbf', 'poly']),
+    'subsample': trial.suggest_float('subsample', 0.6, 1.0),
+    'shrinkage': trial.suggest_float('shrinkage', 0.7, 1.0),
+    'early_stopping': True,
+    'n_iter_no_change': 5,
 }
 ```
 
@@ -253,9 +355,10 @@ LinearBoost's combination of **runtime efficiency** and **high accuracy** makes 
 
 Future Developments
 -----------------------------
-These are not supported in this current version, but are in the future plans:
-- Supporting categorical variables
-- Adding regression
+These are not yet supported in this current version, but are in the future plans:
+- Supporting categorical variables natively
+- Adding regression support (`LinearBoostRegressor`)
+- Multi-output classification
 
 Reference Paper
 -----------------------------
