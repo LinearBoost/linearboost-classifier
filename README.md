@@ -1,6 +1,6 @@
 # LinearBoost Classifier
 
-![Lastest Release](https://img.shields.io/badge/release-v0.1.5-green)
+![Lastest Release](https://img.shields.io/badge/release-v0.1.6-green)
 [![PyPI Version](https://img.shields.io/pypi/v/linearboost)](https://pypi.org/project/linearboost/)
 ![Python Versions](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)
 [![PyPI Downloads](https://static.pepy.tech/badge/linearboost)](https://pepy.tech/projects/linearboost)
@@ -32,7 +32,7 @@ Key Features:
 
 ---
 
-## 🚀 New in Version 0.1.5
+## 🚀 New in Version 0.1.6
 
 The latest release introduces major architectural improvements designed for **scalability**, **robustness on imbalanced data**, and **training speed**.
 
@@ -193,19 +193,19 @@ The following parameters yielded optimal results during testing. All results are
   - `poly`: For polynomial relationships.
   - `sigmoid`: For sigmoid-like decision boundaries.
 
-- **`kernel_approx`** *(new in v0.1.5)*:
+- **`kernel_approx`** *(new in v0.1.6)*:
   For large datasets with non-linear kernels:
   - `None`: Use full kernel matrix (default, exact but \(O(n^2)\) memory).
   - `'rff'`: Random Fourier Features (only with `kernel='rbf'`).
   - `'nystrom'`: Nyström approximation (works with any kernel).
 
-- **`subsample`** *(new in v0.1.5)*:
+- **`subsample`** *(new in v0.1.6)*:
   Values in (0, 1] control stochastic boosting. Use `0.8` for variance reduction while maintaining speed.
 
-- **`shrinkage`** *(new in v0.1.5)*:
+- **`shrinkage`** *(new in v0.1.6)*:
   Values in (0, 1] scale each estimator's contribution. Use `0.8-0.95` to improve generalization.
 
-- **`early_stopping`** *(new in v0.1.5)*:
+- **`early_stopping`** *(new in v0.1.6)*:
   Set to `True` with `n_iter_no_change=5` and `tol=1e-4` to automatically stop training when validation performance plateaus.
 
 These parameters should serve as a solid starting point for most datasets. For fine-tuning, consider using hyperparameter optimization tools like [Optuna](https://optuna.org/).
