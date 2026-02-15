@@ -11,7 +11,6 @@ authors = [
 ]
 description = "LinearBoost Classifier is a rapid and accurate classification algorithm that builds upon a very fast, linear classifier."
 readme = "README.md"
-readme-content-type = "text/markdown"
 keywords = [
     "classification", "classifier", "linear", "adaboost", "boosting", "boost"
 ]
