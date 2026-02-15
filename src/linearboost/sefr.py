@@ -283,7 +283,7 @@ class SEFR(LinearClassifierMixin, BaseEstimator):
         # Validate sample weights
         pos_labels = y_ == 1
         neg_labels = y_ == 0
-        
+
         pos_sample_weight, neg_sample_weight = None, None
         if sample_weight is not None:
             sample_weight = _check_sample_weight(sample_weight, X, dtype=np.float32)
