@@ -280,6 +280,7 @@ class SEFR(LinearClassifierMixin, BaseEstimator):
         else:
             K = self._get_kernel_matrix(X)
 
+        # Validate sample weights
         pos_labels = y_ == 1
         neg_labels = y_ == 0
 

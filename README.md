@@ -1,6 +1,6 @@
 # LinearBoost Classifier
 
-![Lastest Release](https://img.shields.io/badge/release-v0.1.6-green)
+![Latest Release](https://img.shields.io/badge/release-v0.1.7-green)
 [![PyPI Version](https://img.shields.io/pypi/v/linearboost)](https://pypi.org/project/linearboost/)
 ![Python Versions](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)
 [![PyPI Downloads](https://static.pepy.tech/badge/linearboost)](https://pepy.tech/projects/linearboost)
@@ -32,9 +32,45 @@ Key Features:
 
 ---
 
-## 🚀 New in Version 0.1.6
+## 🚀 New in Version 0.1.7
 
-The latest release introduces major architectural improvements designed for **scalability**, **robustness on imbalanced data**, and **training speed**.
+### Gradient Boosting Mode
+
+LinearBoost now supports **gradient boosting** in addition to AdaBoost via the `boosting_type` parameter:
+
+- **`boosting_type='adaboost'`** (default): Classic AdaBoost (SAMME or SAMME.R) that reweights samples by classification error.
+- **`boosting_type='gradient'`**: Fits each base estimator to pseudo-residuals (negative gradient of log-loss). Often better for highly non-linear or XOR-like patterns and smoother decision boundaries.
+
+```python
+# Gradient boosting for complex non-linear patterns
+clf = LinearBoostClassifier(
+    boosting_type='gradient',
+    n_estimators=200,
+    kernel='rbf'
+)
+```
+
+### Class Weighting & Custom Loss
+
+- **`class_weight`**: Use `'balanced'` or a dict of class weights for imbalanced data. Weights are applied in the boosting loop.
+- **`loss_function`**: Optional callable `(y_true, y_pred, sample_weight) -> float` for custom optimization objectives.
+
+```python
+clf = LinearBoostClassifier(
+    class_weight='balanced',  # Adjust for imbalanced classes
+    n_estimators=200
+)
+```
+
+### Default Algorithm
+
+The default **`algorithm`** is now **`'SAMME.R'`** for faster convergence and typically lower test error with fewer iterations (when using `boosting_type='adaboost'`).
+
+---
+
+## 🚀 New in Version 0.1.5
+
+Version 0.1.5 introduced major architectural improvements designed for **scalability**, **robustness on imbalanced data**, and **training speed**.
 
 ### ⚡ Scalable Kernel Approximation
 
@@ -157,8 +193,7 @@ Version 0.1.2 of **LinearBoost Classifier** is released. Here are the changes:
 - Improved Scikit-learn compatibility.
 
 
-Get Started and Documentation
------------------------------
+## Get Started and Documentation
 
 The documentation is available at https://linearboost.readthedocs.io/.
 
@@ -172,12 +207,19 @@ The following parameters yielded optimal results during testing. All results are
 - **`learning_rate`**:
   Values between 0.01 and 1 typically perform well. Adjust based on the dataset's complexity and noise.
 
-- **`algorithm`**:
-  Use either `SAMME` or `SAMME.R`. The choice depends on the specific problem:
+- **`algorithm`** (when `boosting_type='adaboost'`):
+  Use either `SAMME` or `SAMME.R` (default). SAMME.R typically converges faster with lower test error.
   - `SAMME`: May be better for datasets with clearer separations between classes.
-  - `SAMME.R`: Can handle more nuanced class probabilities.
+  - `SAMME.R`: Uses class probabilities; often better for nuanced boundaries.
 
   **Note:** As of scikit-learn v1.6, the `algorithm` parameter is deprecated and will be removed in v1.8. LinearBoostClassifier will only implement the 'SAMME' algorithm in newer versions.
+
+- **`boosting_type`** *(new in v0.1.7)*:
+  - `'adaboost'`: Classic AdaBoost (default).
+  - `'gradient'`: Gradient boosting on pseudo-residuals; try for highly non-linear or XOR-like data.
+
+- **`class_weight`** *(new in v0.1.7)*:
+  Use `'balanced'` for imbalanced datasets so class weights are adjusted automatically.
 
 - **`scaler`**:
   The following scaling methods are recommended based on dataset characteristics:
@@ -193,25 +235,24 @@ The following parameters yielded optimal results during testing. All results are
   - `poly`: For polynomial relationships.
   - `sigmoid`: For sigmoid-like decision boundaries.
 
-- **`kernel_approx`** *(new in v0.1.6)*:
+- **`kernel_approx`** *(new in v0.1.5)*:
   For large datasets with non-linear kernels:
   - `None`: Use full kernel matrix (default, exact but \(O(n^2)\) memory).
   - `'rff'`: Random Fourier Features (only with `kernel='rbf'`).
   - `'nystrom'`: Nyström approximation (works with any kernel).
 
-- **`subsample`** *(new in v0.1.6)*:
+- **`subsample`** *(new in v0.1.5)*:
   Values in (0, 1] control stochastic boosting. Use `0.8` for variance reduction while maintaining speed.
 
-- **`shrinkage`** *(new in v0.1.6)*:
+- **`shrinkage`** *(new in v0.1.5)*:
   Values in (0, 1] scale each estimator's contribution. Use `0.8-0.95` to improve generalization.
 
-- **`early_stopping`** *(new in v0.1.6)*:
+- **`early_stopping`** *(new in v0.1.5)*:
   Set to `True` with `n_iter_no_change=5` and `tol=1e-4` to automatically stop training when validation performance plateaus.
 
 These parameters should serve as a solid starting point for most datasets. For fine-tuning, consider using hyperparameter optimization tools like [Optuna](https://optuna.org/).
 
-Results
--------
+## Results
 
 All of the results are reported based on 10-fold Cross-Validation. The weighted F1 score is reported, i.e. f1_score(y_valid, y_pred, average = 'weighted').
 
@@ -337,6 +378,8 @@ params = {
     'algorithm': trial.suggest_categorical('algorithm', ['SAMME', 'SAMME.R']),
     'scaler': trial.suggest_categorical('scaler', ['minmax', 'robust', 'quantile-uniform', 'quantile-normal']),
     'kernel': trial.suggest_categorical('kernel', ['linear', 'rbf', 'poly']),
+    'boosting_type': trial.suggest_categorical('boosting_type', ['adaboost', 'gradient']),
+    'class_weight': trial.suggest_categorical('class_weight', [None, 'balanced']),
     'subsample': trial.suggest_float('subsample', 0.6, 1.0),
     'shrinkage': trial.suggest_float('shrinkage', 0.7, 1.0),
     'early_stopping': True,
@@ -353,19 +396,18 @@ LinearBoost's combination of **runtime efficiency** and **high accuracy** makes 
   *Discusses how LinearBoost outperforms traditional boosting frameworks in terms of speed while maintaining accuracy.*
 
 
-Future Developments
------------------------------
+## Future Developments
+
 These are not yet supported in this current version, but are in the future plans:
 - Supporting categorical variables natively
 - Adding regression support (`LinearBoostRegressor`)
 - Multi-output classification
 
-Reference Paper
------------------------------
+## Reference Paper
+
 The paper is written by Hamidreza Keshavarz (Independent Researcher based in Berlin, Germany) and Reza Rawassizadeh (Department of Computer Science, Metropolitan college, Boston University, United States). It will be available soon.
 
-License
--------
+## License
 
 This project is licensed under the terms of the MIT license. See [LICENSE](https://github.com/LinearBoost/linearboost-classifier/blob/main/LICENSE) for additional details.
 
