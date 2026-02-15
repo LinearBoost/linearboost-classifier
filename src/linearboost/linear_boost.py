@@ -42,8 +42,7 @@ from sklearn.utils._param_validation import Interval, StrOptions
 from sklearn.utils.multiclass import check_classification_targets, type_of_target
 from sklearn.utils.validation import check_is_fitted
 from sklearn.kernel_approximation import RBFSampler, Nystroem
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
+from sklearn.metrics import f1_score, roc_auc_score
 
 from ._utils import SKLEARN_V1_6_OR_LATER, check_X_y, validate_data
 from .sefr import SEFR
