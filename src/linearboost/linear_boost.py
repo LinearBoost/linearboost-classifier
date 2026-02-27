@@ -581,21 +581,6 @@ class LinearBoostClassifier(_DenseAdaBoostClassifier):
             n_estimators=n_estimators,
             learning_rate=learning_rate,
         )
-        self.algorithm = algorithm
-        self.scaler = scaler
-        self.class_weight = class_weight
-        self.loss_function = loss_function
-        self.kernel = kernel
-        self.gamma = gamma
-        self.degree = degree
-        self.coef0 = coef0
-        self.early_stopping = early_stopping
-        self.validation_fraction = validation_fraction
-        self.n_iter_no_change = n_iter_no_change
-        self.tol = tol
-        self.subsample = subsample
-        self.shrinkage = shrinkage
-        self.boosting_type = boosting_type
 
     if SKLEARN_V1_6_OR_LATER:
 
