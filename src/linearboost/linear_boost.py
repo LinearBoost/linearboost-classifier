@@ -189,7 +189,7 @@ class _DenseAdaBoostClassifier(AdaBoostClassifier):
         score : generator of ndarray of shape (n_samples, k)
             The decision function of the input samples. The order of
             outputs is the same of that of the :term:`classes_` attribute.
-            Binary classification is a special cases with ``k == 1``,
+            Binary classification is a special case with ``k == 1``,
             otherwise ``k==n_classes``. For binary classification,
             values closer to -1 or 1 mean more like the first or second
             class in ``classes_``, respectively.
@@ -581,21 +581,6 @@ class LinearBoostClassifier(_DenseAdaBoostClassifier):
             n_estimators=n_estimators,
             learning_rate=learning_rate,
         )
-        self.algorithm = algorithm
-        self.scaler = scaler
-        self.class_weight = class_weight
-        self.loss_function = loss_function
-        self.kernel = kernel
-        self.gamma = gamma
-        self.degree = degree
-        self.coef0 = coef0
-        self.early_stopping = early_stopping
-        self.validation_fraction = validation_fraction
-        self.n_iter_no_change = n_iter_no_change
-        self.tol = tol
-        self.subsample = subsample
-        self.shrinkage = shrinkage
-        self.boosting_type = boosting_type
 
     if SKLEARN_V1_6_OR_LATER:
 
@@ -892,7 +877,8 @@ class LinearBoostClassifier(_DenseAdaBoostClassifier):
                 # Store validation data for checking
                 validation_data = (training_data_val, y_val, sample_weight_val)
                 y = y_train
-                assert y is not None
+                if y is None:
+                    raise ValueError("Target values 'y' must not be None after validation split.")
         else:
             y_train = y
 
