@@ -189,7 +189,7 @@ class _DenseAdaBoostClassifier(AdaBoostClassifier):
         score : generator of ndarray of shape (n_samples, k)
             The decision function of the input samples. The order of
             outputs is the same of that of the :term:`classes_` attribute.
-            Binary classification is a special cases with ``k == 1``,
+            Binary classification is a special case with ``k == 1``,
             otherwise ``k==n_classes``. For binary classification,
             values closer to -1 or 1 mean more like the first or second
             class in ``classes_``, respectively.
