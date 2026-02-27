@@ -863,6 +863,7 @@ class LinearBoostClassifier(_DenseAdaBoostClassifier):
                 # Store validation data (original features for kernel computation)
                 validation_data = (X_val_transformed, y_val, sample_weight_val)
                 y = y_train
+                assert y is not None
             else:
                 # For linear or approximate kernels, split after transformation
                 n_samples = training_data.shape[0]
@@ -891,6 +892,7 @@ class LinearBoostClassifier(_DenseAdaBoostClassifier):
                 # Store validation data for checking
                 validation_data = (training_data_val, y_val, sample_weight_val)
                 y = y_train
+                assert y is not None
         else:
             y_train = y
 
