@@ -892,7 +892,10 @@ class LinearBoostClassifier(_DenseAdaBoostClassifier):
                 # Store validation data for checking
                 validation_data = (training_data_val, y_val, sample_weight_val)
                 y = y_train
-                assert y is not None
+                if y is None:
+                    raise ValueError(
+                        "Target values 'y' must not be None after validation split."
+                    )
         else:
             y_train = y
 
