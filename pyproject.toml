@@ -68,6 +68,3 @@ atomic = true
 profile = "black"
 skip_gitignore = true
 known_first_party = ["linearboost"]
-
-[tool.ruff.lint.per-file-ignores]
-"**/*.ipynb" = ["E402"]
