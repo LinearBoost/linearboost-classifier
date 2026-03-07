@@ -1,6 +1,6 @@
 # LinearBoost Classifier
 
-![Latest Release](https://img.shields.io/badge/release-v0.1.7-green)
+![Latest Release](https://img.shields.io/badge/release-v0.1.9-green)
 [![PyPI Version](https://img.shields.io/pypi/v/linearboost)](https://pypi.org/project/linearboost/)
 ![Python Versions](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)
 [![PyPI Downloads](https://static.pepy.tech/badge/linearboost)](https://pepy.tech/projects/linearboost)
@@ -29,6 +29,14 @@ Key Features:
 - High Accuracy: Comparable to or exceeding Gradient Boosting Decision Trees (GBDTs)
 - Exceptional Speed: Blazing fast training and inference times
 - Resource Efficient: Low memory usage, ideal for large datasets
+
+---
+
+## 🚀 New in Version 0.1.9
+
+### Security Updates
+
+Version 0.1.9 includes security updates. We recommend upgrading from earlier versions to stay current.
 
 ---
 
