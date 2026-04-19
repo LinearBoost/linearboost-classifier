@@ -5,7 +5,7 @@
 ![Python Versions](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)
 [![PyPI Downloads](https://static.pepy.tech/badge/linearboost)](https://pepy.tech/projects/linearboost)
 
-**Current release: v0.2.0.** This version adds **SEFRBoost**—gradient boosting with linear SEFR splits at tree nodes—via `SEFRBoostClassifier` and `SEFRBoostRegressor` (`from linearboost import …` or `linearboost.sefr_boost`). **LinearBoost security issues have been updated** in this release; upgrade from earlier versions to stay patched.
+**Current release: v0.2.0.** This version adds **SEFRBoost**—gradient boosting with linear SEFR splits at tree nodes—via `SEFRBoostClassifier` and `SEFRBoostRegressor` (`from linearboost import …` or `linearboost.sefr_boost`). It is pronounced /sɛfr-buːst/. **LinearBoost security issues have been updated** in this release; upgrade from earlier versions to stay patched.
 
 ## 🧪 Quickstart demos
 
