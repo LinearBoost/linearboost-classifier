@@ -73,7 +73,9 @@ def _mse_leaf_value(residuals: np.ndarray, sample_weight: np.ndarray) -> float:
     return float(num / den)
 
 
-def _sanitize_sefr_hyperplane(coef: np.ndarray, intercept: float) -> tuple[np.ndarray, float]:
+def _sanitize_sefr_hyperplane(
+    coef: np.ndarray, intercept: float
+) -> tuple[np.ndarray, float]:
     """Stabilize linear split parameters from SEFR (avoid NaN/Inf and matmul overflow)."""
     c = np.asarray(coef, dtype=np.float64).ravel()
     c = np.nan_to_num(c, nan=0.0, posinf=0.0, neginf=0.0)
@@ -243,7 +245,9 @@ class _SEFRTree:
         check_is_fitted(self, "root_")
         n = X.shape[0]
         out = np.zeros(n, dtype=np.float64)
-        stack: list[tuple[_SEFRTreeNode, np.ndarray]] = [(self.root_, np.ones(n, dtype=bool))]
+        stack: list[tuple[_SEFRTreeNode, np.ndarray]] = [
+            (self.root_, np.ones(n, dtype=bool))
+        ]
         while stack:
             node, mask = stack.pop()
             if not np.any(mask):
