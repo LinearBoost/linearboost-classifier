@@ -1,4 +1,4 @@
-# LinearBoost Classifier
+# LinearBoost and SEFRBoost Classifiers
 
 ![Latest Release](https://img.shields.io/badge/release-v0.2.0-green)
 [![PyPI Version](https://img.shields.io/pypi/v/linearboost)](https://pypi.org/project/linearboost/)
