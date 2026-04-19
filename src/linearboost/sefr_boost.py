@@ -387,7 +387,7 @@ class SEFRBoostClassifier(ClassifierMixin, BaseEstimator):
             X, y = validate_data(
                 self,
                 X,
-                y,
+                y=y,
                 accept_sparse=False,
                 dtype=np.float64,
                 ensure_all_finite=True,
@@ -581,7 +581,7 @@ class SEFRBoostRegressor(RegressorMixin, BaseEstimator):
             X, y = validate_data(
                 self,
                 X,
-                y,
+                y=y,
                 accept_sparse=False,
                 dtype=np.float64,
                 ensure_all_finite=True,
