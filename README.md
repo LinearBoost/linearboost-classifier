@@ -1,11 +1,15 @@
 # LinearBoost Classifier
 
-![Latest Release](https://img.shields.io/badge/release-v0.1.9-green)
+![Latest Release](https://img.shields.io/badge/release-v0.2.0-green)
 [![PyPI Version](https://img.shields.io/pypi/v/linearboost)](https://pypi.org/project/linearboost/)
 ![Python Versions](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)
 [![PyPI Downloads](https://static.pepy.tech/badge/linearboost)](https://pepy.tech/projects/linearboost)
 
-## 🧪 Quickstart Demo
+**Current release: v0.2.0.** This version adds **SEFRBoost**—gradient boosting with linear SEFR splits at tree nodes—via `SEFRBoostClassifier` and `SEFRBoostRegressor` (`from linearboost import …` or `linearboost.sefr_boost`). **LinearBoost security issues have been updated** in this release; upgrade from earlier versions to stay patched.
+
+## 🧪 Quickstart demos
+
+### LinearBoost
 
 Want to see how LinearBoost works in practice?
 
@@ -15,6 +19,10 @@ This Jupyter notebook shows how to:
 - Load and prepare data
 - Train `LinearBoostClassifier`
 - Evaluate using F1 score and cross-validation
+
+### SEFRBoost
+
+- **[`optuna_sefrboost_demo.ipynb`](notebooks/optuna_sefrboost_demo.ipynb)** — Hyperparameter search for **`SEFRBoostClassifier`** with **[Optuna](https://optuna.org/)** on sklearn’s Breast Cancer Wisconsin data: default baseline, then **5-fold stratified CV** optimizing F1 (install `optuna` in addition to `linearboost` and `scikit-learn`).
 
 LinearBoost is a fast and accurate classification algorithm built to enhance the performance of the linear classifier SEFR. It combines efficiency and accuracy, delivering state-of-the-art F1 scores and classification performance.
 
@@ -32,11 +40,30 @@ Key Features:
 
 ---
 
+## 🚀 New in Version 0.2.0
+
+### SEFRBoost
+
+SEFRBoost provides binary classification and regression with shallow trees whose internal nodes use **SEFR** hyperplane splits on pseudo-residuals—an oblique-split GBDT-style alternative that lives alongside `LinearBoostClassifier`.
+
+```python
+from linearboost import SEFRBoostClassifier, SEFRBoostRegressor
+# or: from linearboost.sefr_boost import SEFRBoostClassifier, SEFRBoostRegressor
+```
+
+Hands-on examples: [`notebooks/optuna_sefrboost_demo.ipynb`](notebooks/optuna_sefrboost_demo.ipynb) (Optuna tuning).
+
+### Security updates
+
+LinearBoost-related security issues are addressed in v0.2.0. Upgrade from older releases.
+
+---
+
 ## 🚀 New in Version 0.1.9
 
 ### Security Updates
 
-Version 0.1.9 includes security updates. We recommend upgrading from earlier versions to stay current.
+Version 0.1.9 included security updates. For the latest fixes, use **v0.2.0** or newer.
 
 ---
 
