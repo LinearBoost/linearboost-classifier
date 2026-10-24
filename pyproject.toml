@@ -9,7 +9,7 @@ authors = [
     { name = "Hamidreza Keshavarz", email = "hamid9@outlook.com" },
     { name = "Reza Rawassizadeh", email = "rezar@bu.edu"},
 ]
-description = "LinearBoost Classifier is a rapid and accurate classification algorithm that builds upon a very fast, linear classifier."
+description = "LinearBoost: a boosting classifier built on the linear classifier SEFR."
 readme = "README.md"
 keywords = [
     "classification", "classifier", "linear", "adaboost", "boosting", "boost"

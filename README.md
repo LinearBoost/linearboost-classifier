@@ -24,19 +24,7 @@ This Jupyter notebook shows how to:
 
 - **[`optuna_sefrboost_demo.ipynb`](notebooks/optuna_sefrboost_demo.ipynb)** — Hyperparameter search for **`SEFRBoostClassifier`** with **[Optuna](https://optuna.org/)** on sklearn’s Breast Cancer Wisconsin data: default baseline, then **5-fold stratified CV** optimizing F1 (install `optuna` in addition to `linearboost` and `scikit-learn`).
 
-LinearBoost is a fast and accurate classification algorithm built to enhance the performance of the linear classifier SEFR. It combines efficiency and accuracy, delivering state-of-the-art F1 scores and classification performance.
-
-In benchmarks across seven well-known datasets, LinearBoost:
-
-- Outperformed XGBoost on all seven datasets
-- Surpassed LightGBM on five datasets
-- Achieved up to **98% faster runtime** compared to both algorithms
-
-Key Features:
-
-- High Accuracy: Comparable to or exceeding Gradient Boosting Decision Trees (GBDTs)
-- Exceptional Speed: Blazing fast training and inference times
-- Resource Efficient: Low memory usage, ideal for large datasets
+LinearBoost is a boosting classifier built on the linear classifier SEFR: it trains SEFR classifiers in sequence with AdaBoost-style sample reweighting (SAMME or SAMME.R), optionally on kernel features. Training and prediction are fast, and memory use is low.
 
 ---
 
@@ -234,7 +222,7 @@ The documentation is available at https://linearboost.readthedocs.io/.
 
 ## Recommended Parameters for LinearBoost
 
-The following parameters yielded optimal results during testing. All results are based on 10-fold Cross-Validation:
+Suggested starting values for the main parameters:
 
 - **`n_estimators`**:
   A range of 10 to 200 is suggested, with higher values potentially improving performance at the cost of longer training times. When using `early_stopping=True`, you can set a higher value (e.g., 500) and let training stop automatically.
@@ -286,150 +274,6 @@ The following parameters yielded optimal results during testing. All results are
   Set to `True` with `n_iter_no_change=5` and `tol=1e-4` to automatically stop training when validation performance plateaus.
 
 These parameters should serve as a solid starting point for most datasets. For fine-tuning, consider using hyperparameter optimization tools like [Optuna](https://optuna.org/).
-
-## Results
-
-All of the results are reported based on 10-fold Cross-Validation. The weighted F1 score is reported, i.e. f1_score(y_valid, y_pred, average = 'weighted').
-
-## Performance Comparison: F1 Scores Across Datasets
-
-The following table presents the F1 scores of LinearBoost in comparison with XGBoost, CatBoost, and LightGBM across seven standard benchmark datasets. **Each result is obtained by running Optuna with 200 trials** to find the best hyperparameters for each algorithm and dataset, ensuring a fair and robust comparison.
-
-| Dataset                              | XGBoost  | CatBoost | LightGBM | LinearBoost |
-|--------------------------------------|----------|----------|----------|-------------|
-| Breast Cancer Wisconsin (Diagnostic) | 0.9767   | 0.9859   | 0.9771   | 0.9822      |
-| Heart Disease                        | 0.8502   | 0.8529   | 0.8467   | 0.8507      |
-| Pima Indians Diabetes Database       | 0.7719   | 0.7776   | 0.7816   | 0.7753      |
-| Banknote Authentication              | 0.9985   | 1.0000   | 0.9993   | 1.0000      |
-| Haberman's Survival                  | 0.7193   | 0.7427   | 0.7257   | 0.7485      |
-| Loan Status Prediction               | 0.8281   | 0.8495   | 0.8277   | 0.8387      |
-| PCMAC                                | 0.9310   | 0.9351   | 0.9361   | 0.9331      |
-
-### Experiment Details
-- **Hyperparameter Optimization**:
-  - Each algorithm was tuned using **Optuna**, a powerful hyperparameter optimization framework.
-  - **200 trials** were conducted for each algorithm-dataset pair to identify the optimal hyperparameters.
-- **Consistency**: This rigorous approach ensures fair comparison by evaluating each algorithm under its best-performing configuration.
-
-### Key Highlights
-- **LinearBoost** achieves competitive or superior F1 scores compared to the state-of-the-art algorithms.
-- **Haberman's Survival**: LinearBoost achieves the highest F1 score (**0.7485**), outperforming all other algorithms.
-- **Banknote Authentication**: LinearBoost matches the perfect F1 score of **1** achieved by CatBoost.
-- LinearBoost demonstrates consistent performance across diverse datasets, making it a robust and efficient choice for classification tasks.
-
-## Runtime Comparison: Time to Reach Best F1 Score
-
-The following table shows the runtime (in seconds) required by LinearBoost, XGBoost, CatBoost, and LightGBM to achieve their best F1 scores. **Each result is obtained by running Optuna with 200 trials** to optimize the hyperparameters for each algorithm and dataset.
-
-| Dataset                              | XGBoost  | CatBoost | LightGBM | LinearBoost |
-|--------------------------------------|----------|----------|----------|-------------|
-| Breast Cancer Wisconsin (Diagnostic) | 3.22     | 9.68     | 4.52     | 0.30        |
-| Heart Disease                        | 1.13     | 0.60     | 0.51     | 0.49        |
-| Pima Indians Diabetes Database       | 6.86     | 3.50     | 2.52     | 0.16        |
-| Banknote Authentication              | 0.46     | 4.26     | 5.54     | 0.33        |
-| Haberman's Survival                  | 4.41     | 8.28     | 5.72     | 0.11        |
-| Loan Status Prediction               | 0.83     | 97.89    | 28.41    | 0.44        |
-| PCMAC                                | 150.33   | 83.52    | 42.23    | 75.06       |
-
-### Experiment Details
-- **Hyperparameter Optimization**:
-  - Each algorithm was tuned using **Optuna** with **200 trials** per algorithm-dataset pair.
-  - The runtime includes the time to reach the best F1 score using the optimized hyperparameters.
-- **Fair Comparison**: All algorithms were evaluated under their best configurations to ensure consistency.
-
-### Key Highlights
-- **LinearBoost** demonstrates exceptional runtime efficiency while achieving competitive F1 scores:
-  - **Breast Cancer Wisconsin (Diagnostic)**: LinearBoost achieves the best F1 score in just **0.30 seconds**, compared to **3.22 seconds** for XGBoost and **9.68 seconds** for CatBoost.
-  - **Loan Status Prediction**: LinearBoost runs in **0.44 seconds**, outperforming LightGBM (**28.41 seconds**) and CatBoost (**97.89 seconds**).
-- Across most datasets, LinearBoost reduces runtime by up to **98%** compared to XGBoost and LightGBM while maintaining competitive performance.
-
-### Tuned Hyperparameters
-
-#### XGBoost
-```python
-params = {
-    'objective': 'binary:logistic',
-    'use_label_encoder': False,
-    'n_estimators': trial.suggest_int('n_estimators', 20, 1000),
-    'max_depth': trial.suggest_int('max_depth', 1, 20),
-    'learning_rate': trial.suggest_uniform('learning_rate', 0.01, 0.7),
-    'gamma': trial.suggest_loguniform('gamma', 1e-8, 1.0),
-    'min_child_weight': trial.suggest_int('min_child_weight', 1, 10),
-    'subsample': trial.suggest_float('subsample', 0.5, 1.0),
-    'colsample_bytree': trial.suggest_float('colsample_bytree', 0.5, 1.0),
-    'reg_alpha': trial.suggest_loguniform('reg_alpha', 1e-8, 1.0),
-    'reg_lambda': trial.suggest_loguniform('reg_lambda', 1e-8, 1.0),
-    'enable_categorical': True,
-    'eval_metric': 'logloss'
-}
-```
-
-#### CatBoost
-```python
-params = {
-    'iterations': trial.suggest_int('iterations', 50, 500),
-    'depth': trial.suggest_int('depth', 1, 16),
-    'learning_rate': trial.suggest_loguniform('learning_rate', 1e-3, 0.5),
-    'l2_leaf_reg': trial.suggest_loguniform('l2_leaf_reg', 1e-8, 10.0),
-    'random_strength': trial.suggest_loguniform('random_strength', 1e-8, 10.0),
-    'bagging_temperature': trial.suggest_loguniform('bagging_temperature', 1e-1, 10.0),
-    'border_count': trial.suggest_int('border_count', 32, 255),
-    'grow_policy': trial.suggest_categorical('grow_policy', ['SymmetricTree', 'Depthwise', 'Lossguide']),
-    'min_data_in_leaf': trial.suggest_int('min_data_in_leaf', 1, 100),
-    'rsm': trial.suggest_uniform('rsm', 0.1, 1.0),
-    'loss_function': 'Logloss',
-    'eval_metric': 'F1',
-    'cat_features': categorical_cols
-}
-```
-
-#### LightGBM
-```python
-params = {
-    'objective': 'binary',
-    'metric': 'binary_logloss',
-    'boosting_type': trial.suggest_categorical('boosting_type', ['gbdt', 'dart', 'goss']),
-    'num_leaves': trial.suggest_int('num_leaves', 2, 256),
-    'learning_rate': trial.suggest_loguniform('learning_rate', 1e-3, 0.1),
-    'n_estimators': trial.suggest_int('n_estimators', 20, 1000),
-    'max_depth': trial.suggest_int('max_depth', 1, 20),
-    'min_child_samples': trial.suggest_int('min_child_samples', 1, 100),
-    'subsample': trial.suggest_uniform('subsample', 0.5, 1.0),
-    'colsample_bytree': trial.suggest_uniform('colsample_bytree', 0.5, 1.0),
-    'reg_alpha': trial.suggest_loguniform('reg_alpha', 1e-8, 10.0),
-    'reg_lambda': trial.suggest_loguniform('reg_lambda', 1e-8, 10.0),
-    'min_split_gain': trial.suggest_loguniform('min_split_gain', 1e-8, 1.0),
-    'cat_smooth': trial.suggest_int('cat_smooth', 1, 100),
-    'cat_l2': trial.suggest_loguniform('cat_l2', 1e-8, 10.0),
-    'verbosity': -1
-}
-```
-
-#### LinearBoost
-```python
-params = {
-    'n_estimators': trial.suggest_int('n_estimators', 10, 500),
-    'learning_rate': trial.suggest_loguniform('learning_rate', 0.01, 1),
-    'algorithm': trial.suggest_categorical('algorithm', ['SAMME', 'SAMME.R']),
-    'scaler': trial.suggest_categorical('scaler', ['minmax', 'robust', 'quantile-uniform', 'quantile-normal']),
-    'kernel': trial.suggest_categorical('kernel', ['linear', 'rbf', 'poly']),
-    'boosting_type': trial.suggest_categorical('boosting_type', ['adaboost', 'gradient']),
-    'class_weight': trial.suggest_categorical('class_weight', [None, 'balanced']),
-    'subsample': trial.suggest_float('subsample', 0.6, 1.0),
-    'shrinkage': trial.suggest_float('shrinkage', 0.7, 1.0),
-    'early_stopping': True,
-    'n_iter_no_change': 5,
-}
-```
-
-### Why LinearBoost?
-LinearBoost's combination of **runtime efficiency** and **high accuracy** makes it a powerful choice for real-world machine learning tasks, particularly in resource-constrained or real-time applications.
-
-### 📰 Featured in:
-- [LightGBM Alternatives: A Comprehensive Comparison](https://nightwatcherai.com/blog/lightgbm-alternatives)
-  _by Jordan Cole, March 11, 2025_
-  *Discusses how LinearBoost outperforms traditional boosting frameworks in terms of speed while maintaining accuracy.*
-
 
 ## Future Developments
 
