@@ -329,7 +329,7 @@ class SEFRBoostClassifier(ClassifierMixin, BaseEstimator):
 
     _parameter_constraints: dict = {
         "n_estimators": [Interval(Integral, 1, None, closed="left")],
-        "learning_rate": [Interval(Real, 0.0, None, closed="left")],
+        "learning_rate": [Interval(Real, 0.0, None, closed="neither")],
         "max_depth": [Interval(Integral, 1, None, closed="left")],
         "min_samples_leaf": [Interval(Integral, 1, None, closed="left")],
         "min_samples_split": [Interval(Integral, 2, None, closed="left")],
@@ -527,7 +527,7 @@ class SEFRBoostRegressor(RegressorMixin, BaseEstimator):
 
     _parameter_constraints: dict = {
         "n_estimators": [Interval(Integral, 1, None, closed="left")],
-        "learning_rate": [Interval(Real, 0.0, None, closed="left")],
+        "learning_rate": [Interval(Real, 0.0, None, closed="neither")],
         "max_depth": [Interval(Integral, 1, None, closed="left")],
         "min_samples_leaf": [Interval(Integral, 1, None, closed="left")],
         "min_samples_split": [Interval(Integral, 2, None, closed="left")],

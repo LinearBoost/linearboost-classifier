@@ -189,7 +189,7 @@ class _DenseAdaBoostClassifier(AdaBoostClassifier):
         score : generator of ndarray of shape (n_samples, k)
             The decision function of the input samples. The order of
             outputs is the same of that of the :term:`classes_` attribute.
-            Binary classification is a special cases with ``k == 1``,
+            Binary classification is a special case with ``k == 1``,
             otherwise ``k==n_classes``. For binary classification,
             values closer to -1 or 1 mean more like the first or second
             class in ``classes_``, respectively.
@@ -581,6 +581,7 @@ class LinearBoostClassifier(_DenseAdaBoostClassifier):
             n_estimators=n_estimators,
             learning_rate=learning_rate,
         )
+        # AdaBoostClassifier.__init__ resets some of these, so set them again
         self.algorithm = algorithm
         self.scaler = scaler
         self.class_weight = class_weight
@@ -863,7 +864,8 @@ class LinearBoostClassifier(_DenseAdaBoostClassifier):
                 # Store validation data (original features for kernel computation)
                 validation_data = (X_val_transformed, y_val, sample_weight_val)
                 y = y_train
-                assert y is not None
+                if y is None:
+                    raise ValueError("Target y is None after the validation split.")
             else:
                 # For linear or approximate kernels, split after transformation
                 n_samples = training_data.shape[0]
@@ -892,7 +894,8 @@ class LinearBoostClassifier(_DenseAdaBoostClassifier):
                 # Store validation data for checking
                 validation_data = (training_data_val, y_val, sample_weight_val)
                 y = y_train
-                assert y is not None
+                if y is None:
+                    raise ValueError("Target y is None after the validation split.")
         else:
             y_train = y
 
@@ -2014,7 +2017,7 @@ class LinearBoostClassifier(_DenseAdaBoostClassifier):
         score : ndarray of shape of (n_samples, k)
             The decision function of the input samples. The order of
             outputs is the same as that of the :term:`classes_` attribute.
-            Binary classification is a special cases with ``k == 1``,
+            Binary classification is a special case with ``k == 1``,
             otherwise ``k==n_classes``. For binary classification,
             values closer to -1 or 1 mean more like the first or second
             class in ``classes_``, respectively.
